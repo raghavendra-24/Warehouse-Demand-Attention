@@ -9,7 +9,7 @@ from dataclasses import dataclass, replace
 # Test-set discipline (A-12, ARCHITECTURE D12): test metrics and test
 # predictions can only be produced once this is True. Switching it on is a
 # commit of its own, made after the configuration is frozen.
-FINAL_TEST = False
+FINAL_TEST = True
 
 # Fixed CPU thread count, so reruns on one machine are repeatable (A-24).
 NUM_THREADS = 4
