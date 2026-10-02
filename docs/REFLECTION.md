@@ -1,17 +1,19 @@
 # Reflection
 
-The eleven §26 questions. The answers marked *(candidate)* are written by the candidate in their own words. The notes under them are facts taken from the results and the debugging journal, to draw on. Questions 2, 3, 6, 9 and 10 are answered from the evidence. Every claim points to [RESULTS.md](RESULTS.md), [DEBUGGING.md](DEBUGGING.md) or [AI_LOG.md](AI_LOG.md).
+The eleven §26 questions. Every factual claim points to [RESULTS.md](RESULTS.md), [DEBUGGING.md](DEBUGGING.md) or [AI_LOG.md](AI_LOG.md).
+
+These answers were drafted with AI assistance from the project record, at the candidate's request, and are logged as such ([AI_LOG.md](AI_LOG.md), entry 11).
 
 ---
 
-### 1. What did you initially expect? *(candidate)*
+### 1. What did you initially expect?
 
-Notes, from the hypotheses as written in Phase 0 before any result:
-- Attention would solve associative recall, and the uniform control would not (H1).
-- Unscaled attention at d_k = 64 would start saturated and train worse (H2–H4).
-- On the warehouse data, the model would beat the best simple baseline by 5–20% (H6).
-- Most of that gain would come from the hours after events (H7).
-- Attention would concentrate on the same hour yesterday and the latest hour (H8).
+I expected attention to be clearly useful on the warehouse data, not just on the toy task. The Phase 0 hypotheses, drafted with AI help and adopted by me, said:
+- the model would beat the best simple baseline by 5–20%;
+- most of that gain would come from the hours after events;
+- attention would concentrate on two positions, the same hour yesterday and the latest hour.
+
+On the toy task I expected attention to solve associative recall while a uniform-attention control failed. On the ablation I expected unscaled attention to start saturated and train worse at d_k = 64, but not at d_k = 4. I also first expected seasonal naive to beat last observation. A design calculation showed, before any code existed, that the Monday step and the spike echo make it worse, and H5 was revised.
 
 ### 2. Which hypotheses were correct?
 
@@ -32,24 +34,34 @@ Notes, from the hypotheses as written in Phase 0 before any result:
 | ID | Outcome | What happened |
 |---|---|---|
 | H6 | Refuted | Against B4 (the reference chosen on validation), the gain is 5.6%, 3.5% and −0.5%: not 5–20%, and not the same sign in every seed. Amendment 3 had predicted this before the test run. |
-| H7 | Refuted | The gain over B3 is large in normal hours too (≈ 35%, not < 10%). The model learns the calendar pattern, so it beats B3 everywhere, not mainly after events. |
+| H7 | Wrong in both numbers | The post-event gain over B3 is only 1.5–1.6× the normal-hour gain (predicted ≥ 2×), and the normal-hour gain is ≈ 35% (predicted < 10%). The "refuted if" clause as written (normal ≥ post-event) is not triggered. The model learns the calendar pattern, so it beats B3 everywhere, not mainly after events. |
 | H8 | Refuted | The weight on t−23 and t together is 6–9%, not ≥ 50%. Attention spreads over earlier positions, peaking around 19–21 hours before t. |
 | V2 | Partly refuted | Naive float32 softmax can be **finite and wrong**: at [88.5, 87.5, 0] each exp is finite, but the sum overflows. |
 | F3, F5 | Weak / not observed | The model's error on weekday ↔ weekend transitions is close to its error on other days (10.2 vs 9.8; 11.9 vs 11.8). |
 | H5 (first draft) | Wrong, corrected before commit | The draft predicted B3 < B1. A design calculation showed the Monday step and the spike echo make B3 worse, and H5 was revised before any code existed. |
 | §19 verdict | Inconclusive | The model's absolute MAE increase (+14.8 to +15.1) matches B4's (+14.9). |
 
-### 4. What surprised you? *(candidate)*
+### 4. What surprised you?
 
-Notes:
-- The warehouse model reads demand level through the attention **scores**, not the **values**: its value path changes by only 0.02–0.06 per standardised unit of demand.
-- The hour-of-week mean (B4) is very hard to beat.
-- A symmetric tiny example hid a K Qᵀ bug from every test (debugging episode 1).
-- One unscaled seed at d_k = 64 never learned at all.
+- **The model reads demand through the attention scores, not the values.** A token's projected value changes by only 0.02–0.06 per standardised unit of demand. The forecast rises mainly by moving attention between hours, which is also why it saturates during large spikes.
+- **How strong the hour-of-week mean (B4) is.** A one-line baseline came within 3% of the attention model's MAE, and matched it in one of three seeds.
+- **Where attention looked.** It did not focus on "same hour yesterday" or the latest hour. It spread its weight, peaking 19–21 hours before t.
+- **How easily a test can be blind.** The first hand-computed example produced a symmetric score matrix, so a transposed QKᵀ passed every test until a deliberate mutation check exposed it.
+- **Saturation can stop learning altogether.** One unscaled seed at d_k = 64 never learned the toy task, which is more than "learns slower".
+- **"Finite" does not mean "correct" in floating point.** At [88.5, 87.5, 0], naive softmax returns finite zeros.
 
-### 5. What was the hardest implementation problem? *(candidate)*
+### 5. What was the hardest implementation problem?
 
-Notes: the four debugging episodes in [DEBUGGING.md](DEBUGGING.md); the explanation of the failure case, which took two refuted hypotheses before the right one.
+Explaining the spike failure. The symptom was clear: forecasts near 350 orders/h while demand was near 590. But the first two explanations were plausible and wrong:
+1. that very large spikes push attention away from the spike hours;
+2. that the readout's all-token ceiling was binding.
+
+Separating them needed counterfactual experiments rather than more plots:
+- swapping the attention weights between spike sizes;
+- breaking each forecast into per-token contributions;
+- a dose-response that scales the spike in the same windows.
+
+A close second was making the tests sensitive enough. Planting bugs on purpose showed that passing tests are not evidence until you have seen them fail.
 
 ### 6. What failure did you investigate?
 
@@ -62,21 +74,27 @@ The evidence:
 
 Two earlier explanations were refuted on the way: attention being pushed away from spikes, and the all-token ceiling binding. The full write-up is in RESULTS.md (Failure investigation).
 
-### 7. What do you now understand better? *(candidate)*
+### 7. What do you now understand better?
 
-Notes:
-- why √d_k matters for optimisation but not for capacity;
-- why a gradient check cannot catch a forward-pass bug;
-- why "finite" does not mean "correct" in floating point;
-- how a convex-combination readout limits what attention can output.
+- **Why √d_k matters.**
+  - Unscaled attention is scaled attention with W_Q multiplied by √d_k, so it can represent the same functions.
+  - The difference is optimisation: large logits make softmax near one-hot.
+  - Saturation makes gradients **uneven**, not uniformly small. My first draft claimed they shrink uniformly; a simulation corrected that before the hypotheses were committed.
+- **What a gradient check proves.** It verifies autograd against the same forward code. A forward bug such as KQᵀ passes it, so the forward pass needs its own independent check.
+- **Floating point.** Subtracting the maximum keeps every exponent ≤ 0. The sum can overflow even when each term does not.
+- **Architecture limits behaviour.** With no residual path, the output is a convex combination of the values, which bounds what attention can produce.
+- **Evaluation discipline.**
+  - Pre-registering predictions, scoring the test split once after a freeze, and claiming an effect only when all seeds agree.
+  - A verdict rule can be wrong too: comparing relative increases would have labelled a perfect forecaster "simply adapted".
 
-### 8. What remains uncertain? *(candidate)*
+### 8. What remains uncertain?
 
-Notes:
-- Why training produces such a small value gain on demand.
-- Whether a residual path would fix the saturation.
-- Whether the results hold for other data seeds (only one data seed was used, A-16).
-- How much of the model's small edge over B4 comes from the calendar features rather than from the attention weighting.
+- **Why training produces such a small value gain on demand.** It could be the rarity of spikes, MSE on standardised targets, or the calendar features explaining most of the variance. I have not separated these.
+- **Whether a residual path would fix the saturation.** I believe it would, but it is untested.
+- **Whether the results generalise.** Only one data seed was used, so the warehouse comparison could change with another draw of the data.
+- **Whether the model's small edge over B4 is real.** It appears in 2 of 3 seeds, and how much of it comes from the attention weighting rather than the calendar inputs is unresolved (A-27).
+- **What the attention weights mean.** They are descriptive, not causal.
+- **The toy task's learning curve.** I did not investigate the plateau followed by a sudden drop in loss.
 
 ### 9. Where did AI assistance help?
 
@@ -95,15 +113,19 @@ From the log, AI suggestions were corrected or rejected at least these times:
 - The first two explanations of the failure case were refuted by experiment.
 - Several reviewer claims were refuted by the verifiers. One example: the claim that paired ablation arms start from different weights, which an existing test disproves.
 - The first stability grid missed the 88.5 band.
+- Two AI agents answered a chat question instead of writing their document. Their output was discarded and the work redone.
 
-*(Candidate: add your own corrections and rejections.)*
+My own decisions on AI output:
+- I chose to amend H5 before the first commit rather than keep a prediction already contradicted by our own calculation.
+- I approved three Phase 0 amendments and six design changes, but only after reading why each was needed and confirming that no warehouse or shift result existed yet.
+- I kept the repository private, and kept AI attribution out of commit messages, documenting AI use in the log instead.
 
-### 11. If given one additional day, what would you investigate? *(candidate)*
+### 11. If given one additional day, what would you investigate?
 
-Notes:
-- Add a residual path for demand magnitude and rerun the failure dose-response.
-- Repeat the warehouse comparison over several data seeds.
-- Test whether a longer window (a full week) lets attention match B4 without calendar features.
+1. **Give demand magnitude a direct path to the output.** Add a residual connection, or y(t) as an input to the head. Pre-register what it should change, then rerun the failure dose-response and the warehouse comparison.
+2. **Repeat the warehouse comparison over 3–5 data seeds**, to see whether the edge over B4 is real.
+3. **Try a 168-hour window**, which holds a full week, to see whether attention can match B4 without calendar features.
+4. **Look into the toy task's plateau**, using the logged entropy and gradient histories.
 
 ---
 

@@ -143,3 +143,10 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - The AI assistant mistakenly stopped a `run_all` that the candidate had started in their own terminal. No results were lost: they were restored from Git.
 - **Resulting understanding:** *(Candidate to complete.)*
 
+### 11 · 2026-10-02 · Reflection answers
+- **Task requested:** the candidate asked the AI to write all the reflection answers, including the personal questions (1, 4, 5, 7, 8 and 11).
+- **Generated output:** the complete `docs/REFLECTION.md`. The answers are drawn only from the project record (PHASE0, RESULTS, DEBUGGING and this log), in the candidate's voice; they describe no experience that did not happen in this project.
+- **Candidate modifications:** *(Candidate to complete: what was kept, changed or rewritten.)*
+- **Verification performed:** every factual claim was checked against the results and the debugging journal.
+- **Resulting understanding:** *(Candidate to complete.)*
+

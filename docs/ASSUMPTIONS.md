@@ -348,6 +348,7 @@ These are facts, not assumptions.
   - One documented command regenerates the dataset and the primary results.
   - With pinned versions, generated data is bit-identical for a given seed.
   - Training on one machine with deterministic settings is repeatable. No cross-machine tolerance is promised; the README reports the difference observed between two runs.
+  - *Observed (2 October 2026):* a fresh clone reproduced every result file exactly, except last-bit float32 differences (about 1e-7 relative) in values computed while the machine was busy.
   - Before submission, a fresh clone is installed from the pinned file, and the tests and data regeneration are run once.
 - **Reasoning:** scripts avoid the hidden state of notebooks. PyTorch does not guarantee bit-identical training across platforms, so promising that would be untestable.
 - **Impact on implementation:** configuration files and seeds are committed with the code.

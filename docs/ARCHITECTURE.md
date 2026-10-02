@@ -46,7 +46,8 @@ experiments/               one script per stage, plus run_all
 prereg/                    the pre-implementation calculation quoted in H2, H3 and A-19, with its output
 tests/                     pytest suite
 results/                   committed outputs, one folder per script
-docs/                      PHASE0, DERIVATION, RESULTS, REFLECTION, AI_LOG, DEMO, ASSUMPTIONS, ARCHITECTURE
+docs/                      PHASE0, DERIVATION, RESULTS, REFLECTION, AI_LOG, DEMO, DEBUGGING, ASSUMPTIONS,
+                           ARCHITECTURE, IMPLEMENTATION_PLAN, ACCEPTANCE_CRITERIA
 ```
 
 **Run convention.** Every command runs from the repository root: `python -m pytest` for the tests and `python -m experiments.<stage>` for each stage. `python -m` puts the root on the import path, so `wda` is found without an install step or a packaging file. Plain `pytest` and `python experiments/<stage>.py` would not find it, which is why the README gives only the `-m` forms.
@@ -114,7 +115,7 @@ The negative binomial has variance λ + λ²/r. NumPy's `negative_binomial(n, p)
 | event_sign, hours_since_onset | int | the sign of the event the group refers to, and hours since its onset (−1 if none). Used for H10, F1 and F2. |
 | target_hour, target_day | int | calendar of the target. Used for F3 and F5. |
 
-The first 24 hours produce no target. A shift series has 8 weeks plus the 24-hour warm-up, so it yields as many targets as the test split. Only the demand feature is standardised: mean and standard deviation of the training targets, computed once by `warehouse.py` and saved with the weights (A-13). The sin/cos features are already bounded.
+The first 24 hours produce no target. A shift series has 52 weeks plus the 24-hour warm-up (PHASE0 Amendment 2), so it yields 8,736 targets. Only the demand feature is standardised: mean and standard deviation of the training targets, computed once by `warehouse.py` and saved with the weights (A-13). The sin/cos features are already bounded.
 
 ### 4.4 Toy sequences
 
@@ -146,7 +147,7 @@ The actual sizes are in PHASE0 and go into the derivation's shape table (FAC-18)
 | `table.md` | The summary table as printed. Warehouse and shift tables have rows MAE and RMSE, and columns Reference baseline / Attention model (mean ± SD, every seed shown) / Uniform control / Difference = model − baseline (orders/h and %, negative means better) (A-15, FAC-35). |
 | `*.png` | Figures (Section 4.7) |
 | `warehouse/predictions_<split>.csv` | Per window: target index, target, `pred_s{s}` and `ctrl_s{s}` per seed, B1, B2, B3, group, event_sign, hours_since_onset, target_hour, target_day. Validation only while `FINAL_TEST` is off; test after. |
-| `warehouse/weights_s{s}.pt`, `weights_ctrl_s{s}.pt` | Trained weights, and the standardisation constants |
+| `warehouse/weights_pred_s{s}.pt`, `weights_ctrl_s{s}.pt` | Trained weights, plus μ, s, the B4 profile, the model config and the seed; `wda.models.load_warehouse_models` rebuilds the models from them |
 | `shift/predictions_<condition>.csv` | As above, per condition |
 | `trace/table.md` | The seven intermediates for the fixed tiny example |
 | `failure/failure_modes.md` | Error slices for F1–F5 and the chosen case |
@@ -210,7 +211,7 @@ All versions are pinned in `requirements.txt`. PyTorch is installed from the off
 | 6 | `ablation` | config | Runs {scaled, unscaled} × d_k {4, 64} × 3 paired seeds. **At step 0, before any update**, it logs on one fixed evaluation batch: row entropy ÷ ln n, logit SD, maximum weight, and ‖∂L/∂q‖ of the **readout row** for every sequence (H2, H3). Only the readout row reaches the loss, so the other rows' query gradients are exactly zero and are not counted (PHASE0 §6). During training it logs the `fit` diagnostics (FAC-27, FAC-30). It reports steps to 95% validation accuracy (H4). | metrics, PNG | §13, §14, H2–H4 |
 | 7 | `warehouse` | config | Builds the windows and splits, computes the standardisation and trains the model and the uniform control (three seeds each). Picks the reference baseline on validation. With `FINAL_TEST` off it scores **validation only**. With it on, it also scores test once, overall and by group, and keeps the validation outputs. Saves weights (with the model config and μ, s), predictions, the averaged attention rows and the figures. Shift needs none of the test outputs, so it is built and checked before `FINAL_TEST`. | metrics, CSV, weights, PNG | §15–§18, H5–H8, A-27 |
 | 8 | `shift` | step 7 weights (which carry the model config and μ, s) and the reference baseline chosen on validation | Generates the four 52-week shift series and scores the saved models and the baselines (B1–B4) on each, with no retraining. Reports MAE for the first 3 hours after each spike onset (H10), and the §19 verdict under PHASE0 Amendment 1, with the original relative rule's outcome alongside. | metrics, CSV | §19, H9–H11 |
-| 9 | `failure` | step 7 and 8 predictions and weights; data and shift configs | Writes the F1–F5 slices: onset hours, the 24 hours after an event, the first hours of Saturday and Monday, and windows where t and t−23 fall on different day types. Picks the case linked to a failure mode and runs the targeted experiment, such as removing the event component from the window and predicting again. | `failure_modes.md`, metrics, PNG | §20, F1–F5 |
+| 9 | `failure` | step 7 and 8 predictions and weights; data and shift configs | Writes the F1–F5 slices: onset hours, the 24 hours after an event, the first hours of Saturday and Monday, and windows where t and t−23 fall on different day types. Investigates the case linked to a failure mode with a targeted dose-response experiment: each spike's excess over its no-event level is scaled by k = 0 … 16 in the same windows (k = 0 removes it), recording the forecast, the attention mass on the spike tokens and their value level. | `failure_modes.md`, metrics, PNG | §20, F1–F5 |
 
 The saturation analysis for FAC-22 reuses the step-6 logs of the unscaled d_k = 64 arm. There is no separate logit-scale sweep: a scope decision to keep the run budget small.
 
@@ -289,7 +290,7 @@ The attack surface is small: local, offline, synthetic data, no service and no u
 
 | Aspect | Expectation and measure |
 |---|---|
-| Data size | 8,736 hours give about 8,700 windows of 24 × 5 float32, about 4 MB. Each shift series gives 1,344 targets. |
+| Data size | 8,736 hours give about 8,700 windows of 24 × 5 float32, about 4 MB. Each shift series gives 8,736 targets. |
 | Model size | One attention layer, d_model about 16: a few thousand parameters |
 | Compute | Batched matrix products over (B, 24, 24) on CPU, with no Python loops over positions |
 | Run budget | 3 toy + 3 control, 12 ablation, and 3 warehouse + 3 control runs, plus evaluation only for the shift. The target is about 30 minutes for `run_all.py`. Measured times are reported (A-25). |
