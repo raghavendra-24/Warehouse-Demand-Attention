@@ -8,11 +8,13 @@ nn.Linear is used only outside the attention core (A-02).
 
 import math
 
+import numpy as np
 import torch
 from torch import nn
 
 from wda.attention import AttentionOutput, AttentionWeights
 from wda.config import ModelConfig
+from wda.run import load_weights
 
 
 def _linear(fan_in: int, fan_out: int, generator: torch.Generator) -> nn.Linear:
@@ -57,3 +59,20 @@ class WarehouseModel(nn.Module):
     def forward(self, features: torch.Tensor) -> tuple:
         out: AttentionOutput = self.attn(self.inp(features), scaled=self.cfg.scaled, uniform=self.cfg.uniform)
         return self.head(out.Y[..., -1, :]).squeeze(-1), out
+
+
+def load_warehouse_models(folder, names: list) -> tuple:
+    """Trained warehouse models from their weight files, plus the training μ, s and B4 profile.
+
+    Each weight file carries the model config and seed, so the model is rebuilt
+    exactly as it was trained (no dependence on the current config.py).
+    """
+    models, extra = {}, None
+    for name in names:
+        w = load_weights(folder / f"weights_{name}.pt")
+        model = WarehouseModel(ModelConfig(**w["extra"]["model"]), seed=w["extra"]["seed"])
+        model.load_state_dict(w["state_dict"])
+        model.eval()
+        models[name], extra = model, w["extra"]
+    return models, extra["mean"], extra["sd"], np.asarray(extra["profile"])
+

@@ -18,9 +18,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from wda import config, run
-from wda.config import ModelConfig
 from wda.metrics import attention_rows, comparison_table, group_table, score
-from wda.models import WarehouseModel
+from wda.models import load_warehouse_models
 from wda.warehouse_data import generate_series, make_windows
 
 SEEDS = config.WAREHOUSE_TRAIN.seeds
@@ -29,21 +28,10 @@ CTRL = [f"ctrl_s{s}" for s in SEEDS]
 BASELINES = ("B1", "B2", "B3", "B4")
 
 
-def load_models():
-    models, extra = {}, None
-    for name in PRED + CTRL:
-        w = run.load_weights(run.RESULTS / "warehouse" / f"weights_{name}.pt")
-        model = WarehouseModel(ModelConfig(**w["extra"]["model"]), seed=w["extra"]["seed"])
-        model.load_state_dict(w["state_dict"])
-        model.eval()
-        models[name], extra = model, w["extra"]
-    return models, extra["mean"], extra["sd"], np.asarray(extra["profile"])
-
-
 def main():
     out = run.start("shift")
     reference = json.loads((run.RESULTS / "warehouse" / "metrics.json").read_text())["metrics"]["reference_baseline"]
-    models, mean, sd, profile = load_models()
+    models, mean, sd, profile = load_warehouse_models(run.RESULTS / "warehouse", PRED + CTRL)
     per_series, tables = {}, {}
     for name, cfg in config.SHIFT_SERIES.items():
         series = generate_series(cfg)
