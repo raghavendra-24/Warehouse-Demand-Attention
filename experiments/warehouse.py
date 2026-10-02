@@ -21,7 +21,7 @@ import torch.nn.functional as F
 
 from wda import config, run
 from wda.baselines import hour_of_week_profile
-from wda.metrics import comparison_table, group_table, score
+from wda.metrics import attention_rows, comparison_table, group_table, score
 from wda.models import WarehouseModel
 from wda.train import fit
 from wda.warehouse_data import generate_series, make_windows, model_inputs, select, split_masks, standardise, training_stats
@@ -117,21 +117,6 @@ def hypothesis_measures(predictions: dict, table: dict, w: dict, reference: str,
         "H7": {"improvement_over_B3_after_event": improvement["after"],
                "improvement_over_B3_normal": improvement["other"]},
     }
-
-
-@torch.no_grad()
-def attention_rows(models: dict, pred_cols, w: dict, mean: float, sd: float) -> dict:
-    """H8 / FAC-33: the readout row of A (lags t−23 … t) averaged over windows, per seed and per group."""
-    X = model_inputs(w, mean, sd)
-    out = {}
-    for col in pred_cols:
-        _, att = models[col](X)
-        rows = att.A[:, -1, :].numpy()
-        out[col] = {"all": rows.mean(axis=0).tolist(),
-                    **{g: rows[w["group"] == g].mean(axis=0).tolist() for g in ("inside", "after", "other")
-                       if (w["group"] == g).any()},
-                    "weight_on_t_minus_23_and_t": float(rows[:, 0].mean() + rows[:, -1].mean())}
-    return out
 
 
 def write_predictions(path, w: dict, predictions: dict) -> None:

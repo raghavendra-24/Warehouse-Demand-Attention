@@ -100,3 +100,18 @@ def group_table(table: dict, columns: list) -> str:
 def entropy_fraction(A: torch.Tensor) -> torch.Tensor:
     """Row entropy as a fraction of its maximum ln n (H2)."""
     return row_entropy(A) / math.log(A.shape[-1])
+
+
+@torch.no_grad()
+def attention_rows(models: dict, pred_cols, w: dict, mean: float, sd: float) -> dict:
+    """H8 / FAC-33: the readout row of A (lags t−23 … t) averaged over windows, per seed and per group."""
+    X = model_inputs(w, mean, sd)
+    out = {}
+    for col in pred_cols:
+        _, att = models[col](X)
+        rows = att.A[:, -1, :].numpy()
+        out[col] = {"all": rows.mean(axis=0).tolist(),
+                    **{g: rows[w["group"] == g].mean(axis=0).tolist() for g in ("inside", "after", "other")
+                       if (w["group"] == g).any()},
+                    "weight_on_t_minus_23_and_t": float(rows[:, 0].mean() + rows[:, -1].mean())}
+    return out
