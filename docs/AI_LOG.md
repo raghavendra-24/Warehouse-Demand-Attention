@@ -22,12 +22,12 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
 - **Generated output:** a long requirements analysis (about 57,000 words). It was kept as working notes and is not part of the submission; its main findings are summarised here:
   - self-attention needs positional or time information;
   - the §16 diagram is off by one against §17;
-  - seasonal naive y(t−23) is the oldest value in the window;
+  - seasonal naive $y(t-23)$ is the oldest value in the window;
   - scaled and unscaled attention are reparameterisations of each other;
   - the gradient check needs float64.
 - **Candidate modifications:** No edits to the generated analysis. The candidate supplied the answers to the blocking questions: deadline 3 October 2026 at midnight (read as 23:59 IST), Phase 0 submitted with the final submission, submission through a Git repository whose visibility the candidate sets at the end.
 - **Verification performed:** independent AI critique passes; PRD quotations checked against the PRD text; an automated check that every cross-reference in the analysis resolves.
-- **Resulting understanding:** The PRD grades method over accuracy: formulation, verification, hypotheses stated before results, and honest failure analysis. Self-attention needs position or time information, because without it the model cannot tell t−1 from t−23.
+- **Resulting understanding:** The PRD grades method over accuracy: formulation, verification, hypotheses stated before results, and honest failure analysis. Self-attention needs position or time information, because without it the model cannot tell $t-1$ from $t-23$.
 
 ### 2 · 2026-10-01 · Critical review of the analysis
 - **Tool used:** Claude Code (Claude Opus 5.5), with a multi-agent workflow.
@@ -57,8 +57,8 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
 - **Task requested:** the candidate asked the AI to draft the Phase 0 hypotheses.
 - **Generated output:** hypotheses H1–H11, expected verification results V1–V2, failure modes F1–F5, and [prereg/init_stats.py](../prereg/init_stats.py) with its output [prereg/init_stats.txt](../prereg/init_stats.txt), and the design calculation [prereg/design_expectations.py](../prereg/design_expectations.py). These are now in [PHASE0.md](PHASE0.md) items 4 and 5.
 - **Corrections made during drafting:**
-  - The calculation showed that unscaled attention at d_k = 64 does **not** shrink gradients uniformly: the median is about the same or larger, while about 9–16% of rows nearly vanish. H3 was rewritten to predict uneven gradients.
-  - The uniform-attention control's expected accuracy was corrected from 1/vocabulary to about 1/n_pairs.
+  - The calculation showed that unscaled attention at $d_k = 64$ does **not** shrink gradients uniformly: the median is about the same or larger, while about 9–16% of rows nearly vanish. H3 was rewritten to predict uneven gradients.
+  - The uniform-attention control's expected accuracy was corrected from $1/\text{vocabulary}$ to about $1/n_{\text{pairs}}$.
   - The baseline-ordering design target was raised to a daily amplitude of 5× the noise.
   - A closed-form calculation of the baselines' expected errors (`prereg/design_expectations.py`) showed that the drafted H5 ordering was wrong. The Monday step and the 24-hour spike echo make seasonal naive worse than last observation. With the candidate's agreement, H5 was revised before the first commit.
 - **Candidate modifications:** No edits to the wording. The candidate asked the AI to draft the hypotheses. After the design calculation, the candidate chose to amend H5 before the first commit rather than commit a prediction that the calculation already contradicted.
@@ -78,7 +78,7 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
 - **Verification performed:**
   - Architecture: two AI critics, one for coverage against the acceptance criteria and one for simplicity, found 40 issues, which were applied. A third, technical critic failed to run (an authentication error), so its lens was not applied. Among the fixes:
     - the `python -m` run convention, reproduced as necessary on a scratch layout;
-    - H3's per-row ∂L/∂q logging;
+    - H3's per-row $\partial L / \partial q$ logging;
     - the `FINAL_TEST` switch;
     - a separate shift seed;
     - the stability sweep dropped as out of scope.
@@ -101,9 +101,9 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
 - **Verification performed:**
   - The tiny example was worked out by hand and matches the code at every step.
   - 22 tests pass.
-  - A mutation check planted five bugs in the attention core (KQᵀ, no scaling, softmax over the wrong axis, division by d_k, AᵀV). It found that the first tiny example gave a symmetric score matrix, so KQᵀ passed every test. The example was changed and an element-by-element reference test was added; all five bugs are now caught.
-  - The gradient check's negative control (a detached W_Q) is reported as disagreeing.
-- **Resulting understanding:** I can trace the seven attention operations by hand on the tiny example. A gradient check only compares autograd with the same forward code, so the forward pass needs its own independent test, and the test example must be asymmetric to catch a transposed QKᵀ or AᵀV.
+  - A mutation check planted five bugs in the attention core ($KQ^\top$, no scaling, softmax over the wrong axis, division by $d_k$, $A^\top V$). It found that the first tiny example gave a symmetric score matrix, so $KQ^\top$ passed every test. The example was changed and an element-by-element reference test was added; all five bugs are now caught.
+  - The gradient check's negative control (a detached $W_Q$) is reported as disagreeing.
+- **Resulting understanding:** I can trace the seven attention operations by hand on the tiny example. A gradient check only compares autograd with the same forward code, so the forward pass needs its own independent test, and the test example must be asymmetric to catch a transposed $QK^\top$ or $A^\top V$.
 
 ### 8 · 2026-10-02 · Data, models, training and metrics (T-301 … T-404), and review fixes
 - **Tool used:** Claude Code (Claude Opus 5.5), with a multi-agent workflow.
@@ -118,7 +118,7 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
   - The generator was checked against the PHASE0 design calculation: autocorrelation 0.84/0.66/0.68 at lags 1/24/168, amplitude 5.42 × the noise SD, 2.5% of hours in events. Split counts are 6,024 / 1,344 / 1,344, as designed.
   - 61 tests pass, and a full rerun reproduces every result file exactly, apart from the runtime file.
   - The Block A review found three real problems, all fixed:
-    - V2's "finite means correct" claim is false: at logits [88.5, 87.5, 0], naive softmax returns finite zeros. It will be reported as refuted.
+    - V2's "finite means correct" claim is false: at logits $[88.5, 87.5, 0]$, naive softmax returns finite zeros. It will be reported as refuted.
     - The FAC-15 test could not see an unregistered parameter.
     - The text-based prohibited-API scan missed aliases. It was replaced by an AST scan.
 - **Resulting understanding:** For paired experiments, every parameter must come from a seeded generator, because nn.Linear's default initialisation uses the global random state. The standardisation and the B4 profile must be computed from training targets only.
@@ -139,7 +139,7 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
   - H1–H4 were scored against their frozen thresholds; all four hold.
   - The verifiers rejected several reviewer claims, and the reasons are recorded with each claim. For example, the claim that paired arms start from different weights was refuted by the existing test.
   - The upheld claims were checked by direct computation. The 8-week seed-202 shift series really has one spike, and the relative verdict rule really does label a perfect forecaster "simply adapted".
-- **Resulting understanding:** Scaling by √d_k changes how attention trains, not what it can represent. Unscaled attention at d_k = 64 starts almost one-hot, gets very uneven gradients, and in one seed never learned. A verdict rule can be wrong too, so it should be checked before any result exists.
+- **Resulting understanding:** Scaling by $\sqrt{d_k}$ changes how attention trains, not what it can represent. Unscaled attention at $d_k = 64$ starts almost one-hot, gets very uneven gradients, and in one seed never learned. A verdict rule can be wrong too, so it should be checked before any result exists.
 
 ### 10 · 2026-10-02 · Warehouse, shift and failure experiments; run_all; the documents
 - **Tool used:** Claude Code (Claude Opus 5.5), with a multi-agent workflow.
@@ -175,7 +175,8 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
 - **Task requested:**
   - check the whole repository once more against the PRD and the acceptance criteria;
   - convert the documents the submission form asks for into PDFs (Phase 0, derivation, experiment report, reflection, AI tools);
-  - make a demo video covering the seven §30 parts.
+  - make a demo video covering the seven §30 parts;
+  - write the equations in mathematical form and make the PDFs easier to read.
 - **Generated output:**
   - two compliance-audit reports (one against the PRD and the submission form, one against FAC-01 … FAC-69), kept as working notes;
   - the fixes they called for, all to documents, with no change to code or results:
@@ -184,11 +185,13 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
     - a **Tool used** line in every entry of this log, the implementation plan added to entry 5, and entry 6's verification corrected;
     - PHASE0 Record 4 (the measured autocorrelation, which section 3 had promised);
     - a README configuration section (§22), six figures embedded in RESULTS.md, and the Definition-of-Done status;
-  - five PDFs, rendered from the committed Markdown documents without changing their content;
-  - a terminal recording of the seven parts, 4 minutes long, with no voice-over. Every command is typed and run live in a fresh clone of `v1.0-submission`, including the full training runs. The waits are shortened and marked "time-lapse", and the committed figures are shown after each stage.
-- **Candidate modifications:** The candidate rejected the first video, a captioned slide walkthrough, and asked instead for a recording of the commands being typed and run, which replaced it. No edits to the documents. The candidate made the repository public for submission.
+  - the equations in DERIVATION, RESULTS, REFLECTION, this log, DEMO and the README rewritten as typeset LaTeX mathematics. The notation changes; no wording, number or claim does;
+  - five PDFs rendered from the committed Markdown documents, each with a title page, a guide to the labels (H, V, F, A, FAC, §, B1–B4), a table of contents, page numbers and typeset equations. The Phase 0 PDF is a typeset edition: its wording, numbers and hypotheses are identical to `docs/PHASE0.md`, which is left exactly as pre-registered;
+  - two terminal recordings of the seven parts, with no voice-over. Every command is typed and run live in a fresh clone of `v1.0-submission`, including the full training runs; the waits are shortened and marked "time-lapse", and the committed figures are shown after each stage. The first (4 minutes) shows a neutral prompt. The second (4.5 minutes), made at the candidate's request, shows the candidate's name in the prompt and also prints the Phase 0 predictions next to the measured ablation results.
+- **Candidate modifications:** The candidate rejected the first video, a captioned slide walkthrough, and asked instead for a recording of the commands being typed and run, which replaced it; they then asked for their name in the prompt and for the earlier take to be kept. They asked for the equations in mathematical form and for more readable PDFs, and chose to keep `docs/PHASE0.md` unchanged and to typeset only the submission documents and the README. No edits to the documents. The candidate made the repository public for submission.
 - **Verification performed:**
   - Each audit finding was checked against the files and the result JSON before it was fixed. For example, the per-seed attention peaks were recomputed from `results/warehouse/metrics.json`.
   - The final take's rerun reproduced every committed `metrics.json` bit for bit. An earlier take, on a busy machine, differed in eight failure-slice means by at most 7e-9 relative, the last-bit float32 effect described in the README. Every frame was checked for private paths, and stills of every part and figure were reviewed. Two earlier takes were discarded: one had truncated tables, and one cut the reading pauses short.
-  - The PDFs were checked page by page against the Markdown by independent AI reviewers. The rendering defects they found were fixed at the source and the PDFs re-rendered: two reflection tables that did not render, a softmax formula and the symbol k* whose characters were read as emphasis, a list paragraph out of place, and the ≠ glyph.
+  - The equation rewrite was checked by a script that compares every number and ID with the previous commit, renders each document with GitHub's own Markdown renderer, and compiles every formula; an independent AI verifier then reviewed each document's changes for meaning and notation.
+  - The PDFs were checked page by page against the Markdown by independent AI reviewers. The rendering defects they found were fixed at the source and the PDFs re-rendered: two reflection tables that did not render, a softmax formula and the symbol $k^{\ast}$ whose characters were read as emphasis, a list paragraph out of place, and the ≠ glyph.
 - **Resulting understanding:** A final audit against the original requirements still finds real errors, such as a claim true for one seed written as if true for all three. The submission documents are the repository's own documents, so every number in them traces back to a committed result file.

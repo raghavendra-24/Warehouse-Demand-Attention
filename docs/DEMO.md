@@ -18,11 +18,11 @@ Parts 6 and 7 are fast enough to run live as well, because they load the saved w
 
 1. **Attention.**
    - Walk through [wda/attention.py](../wda/attention.py) line by line. Each §7 operation is a named statement, and the softmax is hand-written and max-subtracted.
-   - Show the trace and point out that S and A are asymmetric. That is why the hand-computed test catches both KQᵀ and AᵀV bugs ([docs/DEBUGGING.md](DEBUGGING.md), episode 1).
+   - Show the trace and point out that $S$ and $A$ are asymmetric. That is why the hand-computed test catches both $KQ^\top$ and $A^\top V$ bugs ([docs/DEBUGGING.md](DEBUGGING.md), episode 1).
 2. **Gradients.**
-   - Every one of the 45 entries agrees under A-17's rule: |g_auto − g_num| ≤ 1e-8 + 1e-6·|g_num|.
-   - Explain h = 1e-6 in float64: truncation error ∝ h², round-off error ∝ ε/h.
-   - Explain why the loss is Σ R ⊙ Y and not sum(A): each row of A sums to 1, so the gradient of sum(A) is zero.
+   - Every one of the 45 entries agrees under A-17's rule: $\lvert g_{\text{auto}} - g_{\text{num}} \rvert \le 10^{-8} + 10^{-6} \cdot \lvert g_{\text{num}} \rvert$.
+   - Explain $h = 10^{-6}$ in float64: truncation error $\propto h^2$, round-off error $\propto \varepsilon / h$.
+   - Explain why the loss is $\sum R \odot Y$ and not $\operatorname{sum}(A)$: each row of $A$ sums to 1, so the gradient of $\operatorname{sum}(A)$ is zero.
 3. **Training.**
    - Attention reaches 0.9999 held-out accuracy, while the uniform control stays at 1/8. The control can see which values are present, but not which one belongs to the queried key.
    - Point out the plateau, then the sudden drop in loss.
@@ -32,9 +32,9 @@ Parts 6 and 7 are fast enough to run live as well, because they load the saved w
    - The attention weights are descriptive, not causal.
 5. **Ablation.**
    - Start from the Phase 0 predictions. `grep -E '^\| (ID|H2|H3|H4) \|' docs/RESULTS.md | cut -d'|' -f2-5` prints each prediction next to what was measured and the verdict.
-   - At d_k = 64, unscaled attention starts almost one-hot (entropy 0.15 of ln n).
+   - At $d_k = 64$, unscaled attention starts almost one-hot (entropy 0.15 of $\ln n$).
    - Its query gradients become extremely uneven: 11–15% of rows get almost nothing, while the p90/p10 spread exceeds 1,000.
-   - It needs 2× the steps to reach 95%, and one seed never learns. At d_k = 4 there is no difference.
+   - It needs 2× the steps to reach 95%, and one seed never learns. At $d_k = 4$ there is no difference.
 6. **Generalisation.**
    - The noise and spike shifts behave as H9–H11 predicted.
    - The §19 verdict is inconclusive: the model's MAE increase matches B4's.
@@ -46,7 +46,7 @@ Parts 6 and 7 are fast enough to run live as well, because they load the saved w
 
 ## Recording
 
-A terminal recording of all seven parts, in the order above, is linked in the submission form (4 minutes, no voice-over). It was made from a fresh clone of tag `v1.0-submission`, with the environment installed from `requirements.txt`. The code and results are the same in `v1.1-submission`, which changes only documents.
+A terminal recording of all seven parts, in the order above, is linked in the submission form (about 4.5 minutes, no voice-over). It was made from a fresh clone of tag `v1.0-submission`, with the environment installed from `requirements.txt`. The code and results are the same in `v1.1-submission`, which changes only documents.
 - every command is typed and run live, including the full toy, warehouse and ablation training runs;
 - the long training waits are shortened and marked "time-lapse" in the title bar;
 - the committed figures are shown after the stage that produces them;

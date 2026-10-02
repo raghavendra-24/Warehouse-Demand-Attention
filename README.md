@@ -12,11 +12,11 @@ The hypotheses were committed before any result existed: commit `2cba495` comes 
 
 | Experiment | Result | Pre-registered prediction |
 |---|---|---|
-| Toy task (associative recall) | Attention reaches **0.9999** held-out accuracy; the uniform-attention control reaches **0.1249** (= 1/8) | H1 ✅ |
-| Ablation, d_k = 64 | Unscaled attention starts almost one-hot (entropy 0.15 of ln n, against 0.83 when scaled), needs **2.07×** the steps to reach 95%, and one seed never learns. At d_k = 4 there is no difference. | H2, H3, H4 ✅ |
+| Toy task (associative recall) | Attention reaches **0.9999** held-out accuracy; the uniform-attention control reaches **0.1249** ($= 1/8$) | H1 ✅ |
+| Ablation, $d_k = 64$ | Unscaled attention starts almost one-hot (entropy 0.15 of $\ln n$, against 0.83 when scaled), needs **2.07×** the steps to reach 95%, and one seed never learns. At $d_k = 4$ there is no difference. | H2, H3, H4 ✅ |
 | Warehouse, test MAE (orders/h) | B4 hour-of-week mean **15.42** (the reference, chosen on validation); attention **14.97 ± 0.39** (seeds 14.55, 14.88, 15.49); uniform control 43.21. RMSE 25.23 against 30.65. | H5 ✅, H6 ❌ (the gain is not the same sign in every seed), H7 ❌ (both predicted numbers wrong), H8 ❌ |
 | Distribution shift (four 52-week series) | Noise and spike effects as predicted. The §19 verdict is **inconclusive**: the model's MAE rises +14.8 to +15.1, against B4's +14.9. | H9, H10, H11 ✅ |
-| Failure | During large spikes the forecast saturates near 350 orders/h while demand is near 590. The value path carries almost no demand magnitude (dg/dz 0.02–0.06), so the convex-combination readout can only re-weight tokens. | F4 ✅, case investigated |
+| Failure | During large spikes the forecast saturates near 350 orders/h while demand is near 590. The value path carries almost no demand magnitude ($dg/dz$ 0.02–0.06), so the convex-combination readout can only re-weight tokens. | F4 ✅, case investigated |
 
 Full results, with an outcome for every pre-registered ID: [docs/RESULTS.md](docs/RESULTS.md).
 
@@ -70,10 +70,10 @@ The test split is scored only when `FINAL_TEST = True` in `wda/config.py`. It wa
 | Deterministic dataset generation | `tests/test_data.py::test_same_seed_gives_identical_series_and_different_seed_differs` |
 
 The extra tests target subtle bugs:
-- a forward pass checked against values computed by hand, which catches KQᵀ, AᵀV and a missing 1/√d_k;
+- a forward pass checked against values computed by hand, which catches $KQ^\top$, $A^\top V$ and a missing $1/\sqrt{d_k}$;
 - an element-by-element reference;
 - permutation equivariance;
-- unscaled attention equal to scaled attention with W_Q·√d_k;
+- unscaled attention equal to scaled attention with $W_Q \cdot \sqrt{d_k}$;
 - a negative control for the gradient check;
 - leakage-free splits and standardisation;
 - the FAC-34 baseline ramp;
@@ -106,22 +106,22 @@ Every value lives in [wda/config.py](wda/config.py), and each `results/<stage>/m
 | Parameter | Value |
 |---|---|
 | Length | 52 weeks, 8,736 hours, starting on a Monday; seed 101 |
-| Expected level | λ = max(1, m · (B + D(h) + W(d))), where m is the active event's multiplier (1 if none); B = 100 orders/h |
-| Daily profile D(h) | 60·cos(2π(h − 14)/24) + 15·cos(4π(h − 14)/24), peak at 14:00 |
-| Weekday offsets W(d) | +5 Monday–Thursday, 0 Friday, −15 Saturday, −25 Sunday |
-| Noise | negative binomial, Var = λ + λ²/r with r = 100 |
+| Expected level | $\lambda = \max\bigl(1, m \cdot (B + D(h) + W(d))\bigr)$, where $m$ is the active event's multiplier (1 if none); $B = 100$ orders/h |
+| Daily profile $D(h)$ | $60 \cos\bigl(2\pi (h - 14)/24\bigr) + 15 \cos\bigl(4\pi (h - 14)/24\bigr)$, peak at 14:00 |
+| Weekday offsets $W(d)$ | +5 Monday–Thursday, 0 Friday, −15 Saturday, −25 Sunday |
+| Noise | negative binomial, $\operatorname{Var} = \lambda + \lambda^2/r$ with $r = 100$ |
 | Spikes | onset 0.004 per hour, 3–6 h, level × 2–4 |
 | Drops | onset 0.002 per hour, 2–4 h, level × 0.3–0.6 |
 | Splits | by the target's week: 1–36 train, 37–44 validation, 45–52 test (6,024 / 1,344 / 1,344 windows) |
-| Window | 24 hours, y(t − 23) … y(t), forecasting y(t + 1) |
-| Shift series (`SHIFT_SERIES`) | four 52-week series, seed 202: control, higher noise (r = 14), larger spikes (spike multiplier × 2), both |
+| Window | 24 hours, $y(t-23), \ldots, y(t)$, forecasting $y(t+1)$ |
+| Shift series (`SHIFT_SERIES`) | four 52-week series, seed 202: control, higher noise ($r = 14$), larger spikes (spike multiplier × 2), both |
 | Toy task (`ToyDataConfig`) | 8 key–value pairs plus a query, 16 keys and 16 values; 50,000 / 2,000 / 5,000 sequences, seeds 301 / 302 / 303 |
 
-**Models** (`ModelConfig`, `TOY_MODEL`, `WAREHOUSE_MODEL`; PHASE0 "Design values"): one self-attention layer, one head, no mask, no residual path, d_k = d_v = 16.
-- Toy: 9 tokens × 33 features, no input projection, W_Q, W_K, W_V ~ N(0, 1/2), a linear head to 16 classes, 1,856 parameters. The ablation uses d_k ∈ {4, 64}, scaled and unscaled.
-- Warehouse: 24 tokens × 5 features (standardised demand, sin/cos of hour and of weekday), projected to d_model = 16 with W_in ~ N(0, 1/3); W_Q, W_K, W_V ~ N(0, 1/16); a linear head to one output; 881 parameters.
+**Models** (`ModelConfig`, `TOY_MODEL`, `WAREHOUSE_MODEL`; PHASE0 "Design values"): one self-attention layer, one head, no mask, no residual path, $d_k = d_v = 16$.
+- Toy: $9 \text{ tokens} \times 33 \text{ features}$, no input projection, $W_Q, W_K, W_V \sim \mathcal{N}(0, 1/2)$, a linear head to 16 classes, 1,856 parameters. The ablation uses $d_k \in \lbrace 4, 64 \rbrace$, scaled and unscaled.
+- Warehouse: $24 \text{ tokens} \times 5 \text{ features}$ (standardised demand, sin/cos of hour and of weekday), projected to $d_{\text{model}} = 16$ with $W_{\text{in}} \sim \mathcal{N}(0, 1/3)$; $W_Q, W_K, W_V \sim \mathcal{N}(0, 1/16)$; a linear head to one output; 881 parameters.
 
-**Training** (`TrainConfig`): Adam with learning rate 1e-3, β = (0.9, 0.999) and ε = 1e-8; batch 256; 3,000 steps (toy) or 4,000 steps (warehouse); evaluation every 50 steps; training seeds 0, 1 and 2, shared by paired arms. No weight decay, learning-rate schedule or gradient clipping. The weights kept are those with the best validation accuracy (toy) or the best validation MAE (warehouse).
+**Training** (`TrainConfig`): Adam with learning rate $10^{-3}$, $\beta = (0.9, 0.999)$ and $\varepsilon = 10^{-8}$; batch 256; 3,000 steps (toy) or 4,000 steps (warehouse); evaluation every 50 steps; training seeds 0, 1 and 2, shared by paired arms. No weight decay, learning-rate schedule or gradient clipping. The weights kept are those with the best validation accuracy (toy) or the best validation MAE (warehouse).
 
 ## Reproducibility
 
@@ -172,7 +172,7 @@ The reasoning behind each is in [docs/ASSUMPTIONS.md](docs/ASSUMPTIONS.md) and [
   - MAE is the primary metric (A-14).
   - Three seeds, and an effect is claimed only if it has the same sign in all three (A-16).
 - **Experiments:**
-  - The ablation is on the toy task: d_k ∈ {4, 64} × scaled or unscaled × 3 paired seeds (A-19).
+  - The ablation is on the toy task: $d_k \in \lbrace 4, 64 \rbrace$ × scaled or unscaled × 3 paired seeds (A-19).
   - The shift uses four 52-week series, with no retraining (A-20).
 - **Changes made before the results they affect:** three dated Phase 0 amendments, all made before any warehouse or shift result:
   1. the §19 verdict rule;
@@ -186,7 +186,7 @@ The reasoning behind each is in [docs/ASSUMPTIONS.md](docs/ASSUMPTIONS.md) and [
 - **Three hypotheses refuted.**
   - H6: a 5–20% gain in every seed was predicted.
   - H7: the gain was predicted to come mostly from post-event hours, but it comes everywhere. Both predicted numbers are wrong, although its "refuted if" clause as written is not triggered.
-  - H8: attention was predicted to concentrate on t−23 and t, but it spreads out.
+  - H8: attention was predicted to concentrate on $t-23$ and $t$, but it spreads out.
   - V2 is partly refuted: naive softmax can be finite and still wrong.
   - All of these are reported, not tuned away.
 - **Reproducibility tolerance:** float32 last-bit differences under machine load (see above).
