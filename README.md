@@ -14,7 +14,7 @@ The hypotheses were committed before any result existed: commit `2cba495` comes 
 |---|---|---|
 | Toy task (associative recall) | Attention reaches **0.9999** held-out accuracy; the uniform-attention control reaches **0.1249** (= 1/8) | H1 ✅ |
 | Ablation, d_k = 64 | Unscaled attention starts almost one-hot (entropy 0.15 of ln n, against 0.83 when scaled), needs **2.07×** the steps to reach 95%, and one seed never learns. At d_k = 4 there is no difference. | H2, H3, H4 ✅ |
-| Warehouse, test MAE (orders/h) | B4 hour-of-week mean **15.42** (the reference, chosen on validation); attention **14.97 ± 0.39** (seeds 14.55, 14.88, 15.49); uniform control 43.21. RMSE 25.23 against 30.65. | H5 ✅, H6 ❌ (the gain is not the same sign in every seed), H7 ❌, H8 ❌ |
+| Warehouse, test MAE (orders/h) | B4 hour-of-week mean **15.42** (the reference, chosen on validation); attention **14.97 ± 0.39** (seeds 14.55, 14.88, 15.49); uniform control 43.21. RMSE 25.23 against 30.65. | H5 ✅, H6 ❌ (the gain is not the same sign in every seed), H7 ❌ (both predicted numbers wrong), H8 ❌ |
 | Distribution shift (four 52-week series) | Noise and spike effects as predicted. The §19 verdict is **inconclusive**: the model's MAE rises +14.8 to +15.1, against B4's +14.9. | H9, H10, H11 ✅ |
 | Failure | During large spikes the forecast saturates near 350 orders/h while demand is near 590. The value path carries almost no demand magnitude (dg/dz 0.02–0.06), so the convex-combination readout can only re-weight tokens. | F4 ✅, case investigated |
 
@@ -159,7 +159,7 @@ The reasoning behind each is in [docs/ASSUMPTIONS.md](docs/ASSUMPTIONS.md) and [
 - **Spike saturation.** The model cannot forecast spikes much larger than those seen in training; see the failure investigation. A residual path for demand magnitude is the proposed fix. It was not implemented: the PRD does not require a perfect fix, and the configuration was frozen.
 - **Three hypotheses refuted.**
   - H6: a 5–20% gain in every seed was predicted.
-  - H7: the gain was predicted to come mostly from post-event hours, but it comes everywhere.
+  - H7: the gain was predicted to come mostly from post-event hours, but it comes everywhere. Both predicted numbers are wrong, although its "refuted if" clause as written is not triggered.
   - H8: attention was predicted to concentrate on t−23 and t, but it spreads out.
   - V2 is partly refuted: naive softmax can be finite and still wrong.
   - All of these are reported, not tuned away.
