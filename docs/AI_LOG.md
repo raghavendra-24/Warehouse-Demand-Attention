@@ -10,7 +10,7 @@ PRD §2.6: "Material AI assistance must be documented." Each entry gives the six
 | Claude Code multi-agent workflows (same model) | AI assistant | Several agents working in parallel: drafting, independent review and adversarial verification of each other's output (entries 1–3, 5, 6, 8–10, 12) |
 | Python 3.12, PyTorch 2.14.1 (CPU), NumPy 2.5.3, matplotlib 3.11.2, pytest 9.1.1 | Software, not AI | Implementation, experiments, figures, tests |
 | Git and GitHub | Software, not AI | Version history: the pre-registration commit, the freeze commit, and submission |
-| Google Chrome (headless), Pillow, an ffmpeg encoder | Software, not AI | Converting the Markdown documents to PDF, and assembling the demo video |
+| Python-Markdown and Google Chrome (headless); pyte, Pillow and an ffmpeg encoder | Software, not AI | Converting the Markdown documents to PDF; recording the terminal session and assembling the demo video |
 
 No other AI tool was used: no code-completion plugin and no other chatbot. Each entry's **Tool used** line names the tool for that entry.
 
@@ -72,17 +72,17 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
   - then turn it into an implementation plan of numbered tasks, following the candidate's "TASK-xxx" template.
 - **Generated output:**
   - [ARCHITECTURE.md](ARCHITECTURE.md);
-  - [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md): 34 tasks in 8 phases, each with its files, dependencies, requirement IDs, acceptance criteria and time estimate, plus a schedule and an ordered list of what to cut if time ran short. Task T-707 was added later (entry 8);
+  - [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md): 34 tasks in nine phases (Phase 0 to Phase 8), each with its files, dependencies, requirement IDs, acceptance criteria and time estimate, plus a schedule and an ordered list of what to cut if time ran short. Task T-707 was added later (entry 8);
   - [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md): the review's 69 criteria (entry 2), copied into the repository so that the FAC references resolve.
 - **Candidate modifications:** No edits. The candidate approved applying the critics' fixes and committing the pre-registration, which includes all three documents.
-- **Verification performed:** two AI critics, one for coverage against the acceptance criteria and one for simplicity, found 40 issues, which were applied. A third, technical critic failed to run (an authentication error), so its lens was not applied. Among the fixes:
-  - the `python -m` run convention, reproduced as necessary on a scratch layout;
-  - H3's per-row ∂L/∂q logging;
-  - the `FINAL_TEST` switch;
-  - a separate shift seed;
-  - the stability sweep dropped as out of scope.
-
-  For the plan, a script checked that every task's dependencies exist, that there are no cycles, and that each of the 69 acceptance criteria is assigned to at least one task. It caught a dependency cycle in the AI-log task and four Phase 0 criteria with no task; both were fixed. The plan was later reviewed together with the architecture by the sceptical design review (entries 8 and 9).
+- **Verification performed:**
+  - Architecture: two AI critics, one for coverage against the acceptance criteria and one for simplicity, found 40 issues, which were applied. A third, technical critic failed to run (an authentication error), so its lens was not applied. Among the fixes:
+    - the `python -m` run convention, reproduced as necessary on a scratch layout;
+    - H3's per-row ∂L/∂q logging;
+    - the `FINAL_TEST` switch;
+    - a separate shift seed;
+    - the stability sweep dropped as out of scope.
+  - Plan: a script checked that every task's dependencies exist, that there are no cycles, and that each of the 69 acceptance criteria is assigned to at least one task. It caught a dependency cycle in the AI-log task and four Phase 0 criteria with no task; both were fixed. The plan was later reviewed together with the architecture by the sceptical design review (entries 8 and 9).
 - **Resulting understanding:** Even the simplest design needs explicit decisions on seeding, test-set discipline and reproducibility. Reviews showed that details such as the run convention and measuring H3 on the readout row decide whether an experiment can be scored at all. A plan can be checked mechanically: every acceptance criterion needs a task, and the task order must keep the test split unscored until after the freeze.
 
 ### 6 · 2026-10-02 · PHASE0.md
@@ -190,5 +190,5 @@ No other AI tool was used: no code-completion plugin and no other chatbot. Each 
 - **Verification performed:**
   - Each audit finding was checked against the files and the result JSON before it was fixed. For example, the per-seed attention peaks were recomputed from `results/warehouse/metrics.json`.
   - The final take's rerun reproduced every committed `metrics.json` bit for bit. An earlier take, on a busy machine, differed in eight failure-slice means by at most 7e-9 relative, the last-bit float32 effect described in the README. Every frame was checked for private paths, and stills of every part and figure were reviewed. Two earlier takes were discarded: one had truncated tables, and one cut the reading pauses short.
-  - The PDFs were opened and checked page by page against the Markdown.
+  - The PDFs were checked page by page against the Markdown by independent AI reviewers. The rendering defects they found were fixed at the source and the PDFs re-rendered: two reflection tables that did not render, a softmax formula and the symbol k* whose characters were read as emphasis, a list paragraph out of place, and the ≠ glyph.
 - **Resulting understanding:** A final audit against the original requirements still finds real errors, such as a claim true for one seed written as if true for all three. The submission documents are the repository's own documents, so every number in them traces back to a committed result file.

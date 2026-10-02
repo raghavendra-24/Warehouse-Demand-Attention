@@ -31,6 +31,7 @@ Parts 6 and 7 are fast enough to run live as well, because they load the saved w
    - On test, the attention model's MAE is 2.9% lower on average but not in every seed, so H6 is refuted. Its RMSE is 18% lower, because it handles spikes better.
    - The attention weights are descriptive, not causal.
 5. **Ablation.**
+   - Start from the Phase 0 predictions. `grep -E '^\| (ID|H2|H3|H4) \|' docs/RESULTS.md | cut -d'|' -f2-5` prints each prediction next to what was measured and the verdict.
    - At d_k = 64, unscaled attention starts almost one-hot (entropy 0.15 of ln n).
    - Its query gradients become extremely uneven: 11–15% of rows get almost nothing, while the p90/p10 spread exceeds 1,000.
    - It needs 2× the steps to reach 95%, and one seed never learns. At d_k = 4 there is no difference.
@@ -49,6 +50,7 @@ A terminal recording of all seven parts, in the order above, is linked in the su
 - every command is typed and run live, including the full toy, warehouse and ablation training runs;
 - the long training waits are shortened and marked "time-lapse" in the title bar;
 - the committed figures are shown after the stage that produces them;
-- the clone's path is shown as `~/Warehouse-Demand-Attention`.
+- the shell prompt is shown as `raghavendra@laptop:~/Warehouse-Demand-Attention`: the real username, hostname and clone path are replaced in the display;
+- after the ablation run, the Phase 0 predictions for H2–H4 are shown next to the measured values.
 
 The rerun in the recording reproduced every committed `metrics.json` bit for bit; only the `run.json` files (runtime, git revision) changed.

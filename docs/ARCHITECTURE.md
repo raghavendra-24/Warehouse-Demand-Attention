@@ -146,7 +146,7 @@ The actual sizes are in PHASE0 and go into the derivation's shape table (FAC-18)
 | `metrics.json` (warehouse) | Also holds the readout attention row averaged over test windows, per seed and per group (H8, FAC-33). |
 | `table.md` | The summary table as printed. Warehouse and shift tables have rows MAE and RMSE, and columns Reference baseline / Attention model (mean ± SD, every seed shown) / Uniform control / Difference = model − baseline (orders/h and %, negative means better) (A-15, FAC-35). |
 | `*.png` | Figures (Section 4.7) |
-| `warehouse/predictions_<split>.csv` | Per window: target index, target, `pred_s{s}` and `ctrl_s{s}` per seed, B1, B2, B3, group, event_sign, hours_since_onset, target_hour, target_day. Validation only while `FINAL_TEST` is off; test after. |
+| `warehouse/predictions_<split>.csv` | Per window: target index, target, `pred_s{s}` and `ctrl_s{s}` per seed, B1, B2, B3, B4, group, event_sign, hours_since_onset, target_hour, target_day. Validation only while `FINAL_TEST` is off; test after. |
 | `warehouse/weights_pred_s{s}.pt`, `weights_ctrl_s{s}.pt` | Trained weights, plus μ, s, the B4 profile, the model config and the seed; `wda.models.load_warehouse_models` rebuilds the models from them |
 | `shift/predictions_<condition>.csv` | As above, per condition |
 | `trace/table.md` | The seven intermediates for the fixed tiny example |
@@ -159,7 +159,7 @@ All files are kilobytes to a few hundred kilobytes, so all are committed. That m
 1. `generate_data`: one week of demand, and one event.
 2. `toy`: loss and accuracy curves, model and control.
 3. `ablation`: loss, entropy and gradient-norm curves per arm.
-4. `warehouse`: one test week of truth against the model and B1–B3, and the FAC-33 attention figure (average readout row plus a typical, an event and a worst-error window).
+4. `warehouse`: one test week of truth against the model and B1–B4, and the FAC-33 attention figure (average readout row plus a typical, an event and a worst-error window).
 5. `shift`: MAE by condition.
 6. `failure`: the chosen case.
 

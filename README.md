@@ -95,7 +95,7 @@ A mutation check, which plants bugs in the attention core, confirmed that each o
 | 301 / 302 / 303 | toy task: train / validation / test sequences |
 | 0, 1, 2 | model initialisation and batch order. Paired arms share a seed, and so start bit-identical. |
 | 7 | gradient-check tensors |
-| 0, 1 | `prereg/init_stats.py`, the pre-implementation calculation |
+| 0 | `prereg/init_stats.py`, the pre-implementation calculation |
 
 ## Configuration (§22)
 

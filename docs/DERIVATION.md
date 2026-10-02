@@ -25,7 +25,7 @@ The function returns every intermediate (Y, A, Q, K, V, S, S′) for inspection,
 
 Each token x_i ∈ ℝ^d_model is projected three times, by three learned matrices:
 
-  q_i = x_i W_Q ∈ ℝ^d_k,  k_i = x_i W_K ∈ ℝ^d_k,  v_i = x_i W_V ∈ ℝ^d_v.
+    q_i = x_i W_Q ∈ ℝ^d_k,  k_i = x_i W_K ∈ ℝ^d_k,  v_i = x_i W_V ∈ ℝ^d_v.
 
 **What each one represents**
 - The **query** q_i describes what position i is looking for. It is used only on the row side of S, where it scores position i against every position.
@@ -34,7 +34,7 @@ Each token x_i ∈ ℝ^d_model is projected three times, by three learned matric
 
 Combined, the first two make the score a bilinear form in the raw tokens:
 
-  s_ij = q_i · k_j = x_i W_Q W_Kᵀ x_jᵀ = x_i M x_jᵀ,  where M = W_Q W_Kᵀ is d_model × d_model with rank at most d_k.
+    s_ij = q_i · k_j = x_i W_Q W_Kᵀ x_jᵀ = x_i M x_jᵀ,  where M = W_Q W_Kᵀ is d_model × d_model with rank at most d_k.
 
 So the pair (W_Q, W_K) learns a similarity measure on token space, and W_V separately learns which part of each token's content to pass on.
 
@@ -46,7 +46,7 @@ The tiny example (section 7) has W_Q ≠ W_K and gives S = [[4, 1], [4, 5]], whi
 
 ## 2. Dot-product similarity
 
-  s_ij = q_i · k_j = Σ_{m=1..d_k} q_im k_jm = ‖q_i‖ ‖k_j‖ cos θ_ij.
+    s_ij = q_i · k_j = Σ_{m=1..d_k} q_im k_jm = ‖q_i‖ ‖k_j‖ cos θ_ij.
 
 **Why q_i · k_j measures how well position j matches what position i is looking for.** Read each of the d_k coordinates as a learned feature. q_im says how much query i wants feature m (negative: it wants its absence; zero: it does not care), and k_jm says how much key j has it. Each product q_im k_jm is positive when the two agree in sign, negative when they disagree, and large when both are strong. The sum adds up the agreement over all features. For fixed norms, the score is largest for a key pointing the same way as the query (cos θ = 1), zero for an orthogonal key and most negative for an opposite key. Softmax compares scores only within row i (section 4), and every score in that row carries the same factor ‖q_i‖. So ‖q_i‖ sets how sharp row i is, while each key's component along the query's direction, ‖k_j‖ cos θ_ij, decides which positions win.
 
@@ -75,7 +75,7 @@ The softmax Jacobian is J = diag(a) − aaᵀ (section 4). For a one-hot row a =
 
 Unscaled attention is scaled attention with a larger query matrix:
 
-  softmax(QKᵀ) = softmax((√d_k·Q) Kᵀ / √d_k),  and  √d_k·Q = X (√d_k·W_Q).
+    softmax(QKᵀ) = softmax((√d_k·Q) Kᵀ / √d_k),  and  √d_k·Q = X (√d_k·W_Q).
 
 Any function the unscaled layer can represent, the scaled layer represents with W_Q multiplied by √d_k, and the reverse holds too. The two arms have the same capacity. They differ in the logit scale at initialisation (section 3.1), and therefore in the gradients the optimiser sees at the start. A test checks this identity numerically (`test_unscaled_equals_scaled_with_rescaled_query_weights` in tests/test_attention.py).
 
@@ -102,7 +102,7 @@ Each link of the chain is visible: the unscaled spread tracks √d_k, the unscal
 
 For row i of S′:
 
-  a_ij = exp(s′_ij) / Σ_{l=1..n} exp(s′_il).
+    a_ij = exp(s′_ij) / Σ_{l=1..n} exp(s′_il).
 
 **How logits become normalised weights**
 - **Exponentiation makes them positive.** exp(z) > 0 for every real z, so every weight is positive, whatever the sign of its logit.
@@ -112,7 +112,7 @@ For row i of S′:
 
 **Shift invariance.** For any constant c, softmax(s − c·1) = softmax(s), because
 
-  exp(s_j − c) / Σ_l exp(s_l − c) = e^(−c) exp(s_j) / (e^(−c) Σ_l exp(s_l)) = exp(s_j) / Σ_l exp(s_l).
+    exp(s_j − c) / Σ_l exp(s_l − c) = e^(−c) exp(s_j) / (e^(−c) Σ_l exp(s_l)) = exp(s_j) / Σ_l exp(s_l).
 
 Only the differences between logits matter. With two logits this gives softmax(z_1, z_2) = (σ(z_1 − z_2), σ(z_2 − z_1)), where σ(u) = 1/(1 + e^(−u)) is the logistic sigmoid. Section 7 uses this form.
 
@@ -130,7 +130,7 @@ So ∂a_i/∂s_j = a_i(δ_ij − a_j); in matrix form, J = diag(a) − aaᵀ. It
 
 ## 5. Weighted aggregation
 
-  y_i = Σ_j a_ij v_j,  that is,  Y = A V.
+    y_i = Σ_j a_ij v_j,  that is,  Y = A V.
 
 **Each row of AV is a weighted average of the value rows,** with the weights taken from row i of A. Every a_ij is positive and each row of A sums to 1, so y_i is a convex combination of v_1, …, v_n. Three consequences follow.
 - **Outputs stay within the range of the values.** For every output component c, min_j v_jc ≤ y_ic ≤ max_j v_jc. Attention can select and blend what the values contain, but it cannot go beyond them.
@@ -141,7 +141,7 @@ In the tiny example the values are 1 and 4, and the outputs, 1.547277 and 2.8673
 
 **Why this matters for the failure case.** Both models read their prediction from one row of Y, the last token's, through a linear head (A-06). There is no residual path. With head weights w and bias b, the warehouse forecast is
 
-  ŷ = w·y_t + b = Σ_j a_tj (w·v_j) + b,
+    ŷ = w·y_t + b = Σ_j a_tj (w·v_j) + b,
 
 so it is a weighted average of per-hour value levels g_j = w·v_j, plus a constant. It can follow a demand spike in only two ways: the values can carry the spike's size, or attention can move onto the tokens with the larger values. The second route is bounded by the largest value level in the window. The failure investigation found that the learned values carry almost no demand magnitude, so the forecast can rise only by moving attention, and it saturates during large spikes. The forecasts stay well below the all-token ceiling, so what limits them is how little the values change with demand, not the ceiling itself [results/failure/table.md].
 
@@ -191,10 +191,10 @@ This agrees with the shape tests (FAC-54). tests/test_attention.py, with n = 5, 
 
 The fixed tiny example, `TINY_EXAMPLE` [wda/config.py], has n = 2, d_model = 3, d_k = 4 and d_v = 1. Because every size differs, a misplaced transpose in a projection gives a shape error. KQᵀ has the right shape, so the example makes S and A asymmetric to catch it by value.
 
-  X = [[1, 0, 1], [0, 2, 1]]
-  W_Q = [[1, 0, 1, 0], [0, 1, 0, 1], [1, 1, 0, 0]]
-  W_K = [[1, 0, 1, −1], [0, 0, 0, 0], [0, 1, 0, 1]]
-  W_V = [[1], [2], [0]]
+    X = [[1, 0, 1], [0, 2, 1]]
+    W_Q = [[1, 0, 1, 0], [0, 1, 0, 1], [1, 1, 0, 0]]
+    W_K = [[1, 0, 1, −1], [0, 0, 0, 0], [0, 1, 0, 1]]
+    W_V = [[1], [2], [0]]
 
 **Step 1, Q = X W_Q.** Row 1 of X, (1, 0, 1), adds rows 1 and 3 of W_Q: (1, 0, 1, 0) + (1, 1, 0, 0) = (2, 1, 1, 0). Row 2, (0, 2, 1), adds twice row 2 and row 3: (0, 2, 0, 2) + (1, 1, 0, 0) = (1, 3, 0, 2).
 
@@ -248,7 +248,7 @@ Read as attention: query 1 matches key 1 far better (4 against 1), so y_1 stays 
 
 **The loss that is differentiated.**
 
-  L(X, W_Q, W_K, W_V) = Σ_{i,c} R_ic · Y_ic = Σ R ⊙ Y,
+    L(X, W_Q, W_K, W_V) = Σ_{i,c} R_ic · Y_ic = Σ R ⊙ Y,
 
 where Y is the scaled attention output and R is a fixed random n × d_v matrix, drawn once from the same generator as X and the three weight matrices, seeded with 7 [wda/config.py]. Then ∂L/∂Y = R, so the check pushes a generic random direction back through every operation.
 
@@ -264,7 +264,7 @@ where Y is the scaled attention output and R is a fixed random n × d_v matrix, 
 
 **The agreement rule.** An entry agrees if
 
-  |g_auto − g_num| ≤ 1e-8 + 1e-6·|g_num|  (atol = 1e-8, rtol = 1e-6) [wda/config.py].
+    |g_auto − g_num| ≤ 1e-8 + 1e-6·|g_num|  (atol = 1e-8, rtol = 1e-6) [wda/config.py].
 
 A purely relative test, |g_auto − g_num| / |g_num| ≤ rtol, fails near zero: if a true gradient is zero, g_num is pure round-off noise, the ratio is of order 1 or undefined, and a correct entry is flagged. The absolute floor of 1e-8 sits about ten times above the largest observed round-off and far below any meaningful error; the relative term lets the tolerance grow with the gradient. The data show the effect: the five largest relative differences, from 2.62e-08 down to 4.10e-09, belong to the five smallest gradients, all of magnitude 0.083 or less [results/gradcheck/table.md]. The smallest gradient, W_K (0, 2) at +0.0200799948, has the largest relative difference, 2.62e-08, with an ordinary absolute difference of 5.27e-10. W_Q (1, 2), at +0.0396528129, has 1.47e-08 [results/gradcheck/table.md]. The same round-off divided by a smaller gradient gives a larger relative figure. The table's relative column divides by the larger of |g_auto| and |g_num|.
 

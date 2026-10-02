@@ -18,7 +18,7 @@ On the toy task I expected attention to solve associative recall while a uniform
 ### 2. Which hypotheses were correct?
 
 | ID | Outcome | Evidence | RESULTS § |
-|---|---|---|
+|---|---|---|---|
 | H1 | Confirmed | held-out accuracy 0.9999 (attention) vs 0.1249 (uniform control, = 1/8) | §4 |
 | H2 | Confirmed | initial entropy ÷ ln n: 0.15 for unscaled at d_k = 64, ≥ 0.82 for scaled | §5, §6 |
 | H3 | Confirmed | at d_k = 64, 11–15% of unscaled readout rows have < 1% of the scaled median gradient; p90/p10 is 1,270–4,250 vs 3–4 | §5, §6 |
@@ -32,7 +32,7 @@ On the toy task I expected attention to solve associative recall while a uniform
 ### 3. Which hypotheses were wrong?
 
 | ID | Outcome | What happened | RESULTS § |
-|---|---|---|
+|---|---|---|---|
 | H6 | Refuted | Against B4 (the reference chosen on validation), the gain is 5.6%, 3.5% and −0.5%: not 5–20%, and not the same sign in every seed. Amendment 3 had predicted this before the test run. | §7.5 |
 | H7 | Wrong in both numbers | The post-event gain over B3 is only 1.5–1.6× the normal-hour gain (predicted ≥ 2×), and the normal-hour gain is ≈ 35% (predicted < 10%). The "refuted if" clause as written (normal ≥ post-event) is not triggered. The model learns the calendar pattern, so it beats B3 everywhere, not mainly after events. | §7.5 |
 | H8 | Refuted | The weight on t−23 and t together is 6–9%, not ≥ 50%. Averaged over test windows the readout row is nearly flat (2.6–6.3% per position); its small peak is at t−19/t−20 in seed 0, t−7 in seed 1 and t−9 in seed 2. | §7.5, §7.6 |
@@ -145,7 +145,7 @@ My own decisions on AI output:
 | The model learned structure rather than adapting to the training distribution (§19) | Unresolved | inconclusive verdict |
 | Higher noise and larger spikes affect the forecasters as predicted (H9–H11) | Demonstrated for these four series | one shift seed, no retraining (§8) |
 | Every forecaster misses a spike's first hour, and B3 echoes it 24 h later (F1, F2) | Demonstrated | onset MAE 205–212 for all; B3 echo 197 vs the model's 11.7 (§9, §9.7) |
-| Weekday ↔ weekend transitions hurt the model (F3, F5) | Not observed | 10.2 vs 9.8 and 11.9 vs 11.8 (§9.7) |
+| Weekday ↔ weekend transitions hurt the model (F3, F5) | Weak (F3) / not observed (F5) | 10.2 vs 9.8 and 11.9 vs 11.8 (§9.7) |
 | Large spikes hurt the model more than B1 (F4) | Demonstrated | in-spike MAE grows ×2.86 for the model vs ×2.06 for B1 (§9) |
 | The spike failure is caused by the value path's small demand gain | Demonstrated for this model | dose-response experiment, value gains, attention mass |
 | A residual path would fix it | Believed | not tested |

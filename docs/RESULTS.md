@@ -497,7 +497,7 @@ B1 tracks demand at every k, and the model plateaus. Seed 0 moves its attention 
 - **F1, confirmed.** All forecasters miss the onset hour by about the same amount. In hours 1–2 the model lags B1, consistent with the saturation already visible at training-size spikes (k = 1 in 9.5: 232, 223, 193 against 296).
 - **F2, confirmed for B3.** B3's echo error is 197.4, about ten times its normal-hour error. The model does not echo (11.7), consistent with its small weight on t−23 (H8).
 - **F3, weak for the model.** It is 4% worse than the reference slice, against 80% worse for B3 (*computed*). Per-seed values are not reported, so even the 4% is not established.
-- **F4, confirmed in its symptom.** During in-event hours, seed 0's mean weight on t rises from 0.027 (control) to 0.052 (larger spikes), but its rows stay diffuse: the largest mean weight is 0.068. The weights move; they do not shift "sharply". [results/shift/metrics.json]
+- **F4, confirmed in its symptom.** During in-event hours, seed 0's window-averaged weight on t rises from 0.027 (control) to 0.052 (larger spikes), and the averaged row stays flat (largest mean weight 0.068). As Section 7.6 notes, a flat average does not mean flat single rows, and the pre-registered readout entropy (series 1 vs 3) was not recorded, so whether the weights shift "sharply" is not established. [results/shift/metrics.json]
 - **F5, not observed** (11.9 against 11.8). B3's gap in that slice is H5's Monday/Saturday step, not F5.
 
 ## 10. Cross-problem integration (§21)
