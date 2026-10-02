@@ -13,8 +13,9 @@ The four shift series therefore share one event timeline (A-20).
 """
 
 import numpy as np
+import torch
 
-from wda.config import WarehouseDataConfig
+from wda.config import TEST_WEEKS, TRAIN_WEEKS, VAL_WEEKS, WINDOW, WarehouseDataConfig
 
 
 def daily_profile(hour: np.ndarray, cfg: WarehouseDataConfig) -> np.ndarray:
@@ -77,3 +78,69 @@ def _events(cfg: WarehouseDataConfig, rng: np.random.Generator):
         onset[t:end] = t
         t = end
     return multiplier, label, onset
+
+
+# ---------------------------------------------------------------------------
+# Windows, splits and standardisation (A-04, A-05, A-11, A-12, A-13)
+# ---------------------------------------------------------------------------
+
+def make_windows(series: dict, window: int = WINDOW) -> dict:
+    """One row per target hour τ = t+1, with inputs y(τ−24) … y(τ−1) (ARCHITECTURE §4.3).
+
+    The first `window` hours have no full window and produce no target.
+    """
+    y = series["demand"].astype(np.float64)
+    label, onset = series["event_label"], series["event_onset"]
+    tau = np.arange(window, len(y))
+    raw = np.lib.stride_tricks.sliding_window_view(y, window)[:-1]           # rows: y(τ−24) … y(τ−1)
+    hour = np.lib.stride_tricks.sliding_window_view(series["hour_of_day"], window)[:-1]
+    day = np.lib.stride_tricks.sliding_window_view(series["day_of_week"], window)[:-1]
+    calendar = np.stack([np.sin(2 * np.pi * hour / 24), np.cos(2 * np.pi * hour / 24),
+                         np.sin(2 * np.pi * day / 7), np.cos(2 * np.pi * day / 7)], axis=-1)
+
+    in_window = np.lib.stride_tricks.sliding_window_view(label, window)[:-1]
+    inside = label[tau] != 0
+    after = ~inside & (in_window != 0).any(axis=1)
+    # For "after" targets, the most recent event in the window (the last non-zero position).
+    last = window - 1 - np.argmax((in_window != 0)[:, ::-1], axis=1)
+    recent_sign = in_window[np.arange(len(tau)), last]
+    recent_onset = np.lib.stride_tricks.sliding_window_view(onset, window)[:-1][np.arange(len(tau)), last]
+
+    group = np.where(inside, "inside", np.where(after, "after", "other"))
+    event_sign = np.where(inside, label[tau], np.where(after, recent_sign, 0))
+    since = np.where(inside, tau - onset[tau], np.where(after, tau - recent_onset, -1))
+    return {
+        "target_index": tau,
+        "raw_window": raw,
+        "calendar": calendar,
+        "target": y[tau],
+        "group": group,
+        "event_sign": event_sign,
+        "hours_since_onset": since,
+        "target_hour": series["hour_of_day"][tau],
+        "target_day": series["day_of_week"][tau],
+    }
+
+
+def split_masks(windows: dict) -> dict:
+    """Train / validation / test by the week of the target hour, weeks numbered from 1 (A-12)."""
+    week = windows["target_index"] // 168 + 1
+    weeks = {"train": TRAIN_WEEKS, "val": VAL_WEEKS, "test": TEST_WEEKS}
+    return {name: (week >= lo) & (week <= hi) for name, (lo, hi) in weeks.items()}
+
+
+def standardise(x, mean: float, sd: float):
+    """z = (x − μ)/s, with μ and s from the training targets only (A-13)."""
+    return (x - mean) / sd
+
+
+def model_inputs(windows: dict, mean: float, sd: float) -> torch.Tensor:
+    """The 24 × 5 token features: standardised demand, then sin/cos of hour and weekday (A-05)."""
+    z = standardise(windows["raw_window"], mean, sd)[..., None]
+    return torch.from_numpy(np.concatenate([z, windows["calendar"]], axis=-1)).float()
+
+
+def training_stats(windows: dict, masks: dict) -> tuple:
+    """μ and s of the training targets: the only data the standardisation may see (A-13, FAC-38)."""
+    train = windows["target"][masks["train"]]
+    return float(train.mean()), float(train.std())
