@@ -2,7 +2,7 @@
 
 Naive softmax exp(s)/Σexp(s) against the max-subtracted version used in the
 attention core. Saturation at large logits is analysed from the ablation logs,
-not here (review scope S5).
+not here (a scope decision: no separate sweep).
 
 Run: python -m experiments.stability
 """

@@ -177,7 +177,7 @@ Pass/fail criteria the implementation is checked against (FAC-01 … FAC-69). So
 | FAC | Criterion (objective, observable) | Evidence | Source | Priority |
 |---|---|---|---|---|
 | FAC-65 | One Git repository holds all 18 §29 deliverables and every project document: Phase 0, derivation, results, reflection, AI log, demo and assumptions. The README maps each §29 item to its path | Repository; README map | §29 "Submit a single repository/archive", "Include all project documents in the repository" | MUST |
-| FAC-66 | The README covers:<br>• purpose;<br>• setup (Python 3.12, pinned install);<br>• the test command;<br>• the per-stage and run-all commands;<br>• a headline results table;<br>• the deliverables map;<br>• key decisions with their reasons, pointing to ASSUMPTIONS.md and Phase 0;<br>• known issues (FAC-60);<br>• the measured runtime and hardware, with no limit;<br>• a "deliberately not built" list with reasons (F.3) | README | §29(2); §22; §27; §2.7; §33 "Candidates should explain important decisions" | MUST |
+| FAC-66 | The README covers:<br>• purpose;<br>• setup (Python 3.12, pinned install);<br>• the test command;<br>• the per-stage and run-all commands;<br>• a headline results table;<br>• the deliverables map;<br>• key decisions with their reasons, pointing to ASSUMPTIONS.md and Phase 0;<br>• known issues (FAC-60);<br>• the measured runtime and hardware, with no limit;<br>• a "deliberately not built" list with reasons (§27, §28) | README | §29(2); §22; §27; §2.7; §33 "Candidates should explain important decisions" | MUST |
 | FAC-67 | The full commit history is kept, with no squashing. The final submitted commit is dated no later than 3 Oct 2026, 23:59 IST. At that time the assessors can open the repository; the candidate sets access or visibility at the end | `git log`; access check | Confirmed facts; §29; A-22 | MUST |
 
 ## 22. Demo
@@ -200,15 +200,15 @@ Pass/fail criteria the implementation is checked against (FAC-01 … FAC-69). So
 | §2.4 baselines | 34–36 | §22 reproducibility | 49–52 |
 | §2.5 failure | 45 | §23 testing | 53–58 |
 | §2.6 AI assistance | 61, 62 | §24 debugging | 59, 60 |
-| §2.7 scope | 66 (not-built list); F.3 | §25 AI log | 61, 62 |
+| §2.7 scope | 66 (not-built list) | §25 AI log | 61, 62 |
 | §3 actors, local | 08, 50 | §26 reflection | 60, 63, 64 |
-| §4 environment | 08, 09, 50, 57 | §27 not required | F.3; 66 |
-| §5 Phase 0 | 01–07 | §28 optional | F.3 (none attempted) |
+| §4 environment | 08, 09, 50, 57 | §27 not required | 66 (not-built list) |
+| §5 Phase 0 | 01–07 | §28 optional | 66 (none attempted) |
 | §6 statistical design | 10, 11 | §29 submission | 52, 65–67 |
 | §7 attention core | 12, 13 | §30 demo | 68, 69 |
 | §8 derivation | 16–18 | §31 MUST | each one appears in the DoD (G.24) |
 | §9 gradients | 19, 20, 56 | §31 SHOULD | 22, 33, 35, 51, 52, 58 |
-| §10 manual backprop | F.3 (optional) | §31 NICE | F.3 |
+| §10 manual backprop | 66 (optional; not attempted) | §31 NICE | 66 (not attempted) |
 | §11 stability | 21, 22 | §32 NFRs | 13 Controlled; 51 Reproducible; 53 Testable; 60 Honest; 66 Explainable; 47 Maintainable (RJ) |
 | §12 toy task | 15, 23–25 | §33 own decisions | 66 |
 | §13 dynamics | 26, 27 | §34 live review | none: not a deliverable |

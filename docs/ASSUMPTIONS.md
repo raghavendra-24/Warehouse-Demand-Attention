@@ -206,6 +206,7 @@ These are facts, not assumptions.
 - **Assumption:**
   - Report both PRD baselines.
   - Add seasonal naive, ŷ(t+1) = y(t−23): the same hour yesterday, which is the oldest value in the window.
+  - *Amended 2 October 2026 (PHASE0 Amendment 3):* add B4, the mean of the training targets at the same hour of the week. It will probably be the reference.
   - The best baseline on validation is the reference for judging whether attention adds value.
   - "Difference" (§17) = model − baseline, in orders per hour and as a relative change in %. Negative means the model is better.
 - **Reasoning:** the 24-hour average spans exactly one daily cycle, so it averages the daily pattern away. Seasonal naive is the natural strong baseline for hourly data, and costs one line.
@@ -287,13 +288,13 @@ These are facts, not assumptions.
 - **Ambiguity:** which changes to make, and how many.
 - **Assumption:**
   - Evaluation only: no retraining, as §6 and §19 imply, and the training normalisation is reused.
-  - Four 8-week series with the test period's calendar, each preceded by a 24-hour warm-up. Events and count noise use separate random streams from one seed, so all four series share the same event timeline; noise draws are not paired across series:
+  - Four series with the test period's weekly calendar, each preceded by a 24-hour warm-up. They are 52 weeks long (*amended 2 October 2026, PHASE0 Amendment 2*; originally 8 weeks). Events and count noise use separate random streams from one seed, so all four series share the same event timeline; noise draws are not paired across series:
     1. unchanged parameters, as a control;
     2. higher noise, through the dispersion parameter (A-09);
     3. larger spikes;
     4. both together, which is §6's example.
   - The baselines and all three trained warehouse models (A-16) are evaluated on the same series, reported as mean ± SD.
-  - Verdict, fixed in Phase 0: the model "learned useful structure" (§19) if its relative MAE increase from series 1 to series 4 is no larger than the reference baseline's. If it is larger in all three seeds, it "simply adapted" to the training distribution.
+  - Verdict (*amended 2 October 2026, PHASE0 Amendment 1*): the model "learned useful structure" (§19) if it beats the reference on series 1 and its absolute MAE increase from series 1 to series 4 is no larger than the reference's. If the increase is larger in all three seeds, it "simply adapted" to the training distribution. Otherwise the verdict is inconclusive.
 - **Reasoning:**
   - Changing one factor at a time shows which change caused the impact.
   - A shared event timeline makes event-hour comparisons line up across series. Count noise cannot be paired, because the samplers consume a parameter-dependent number of random draws.

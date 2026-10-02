@@ -342,4 +342,32 @@ Higher noise raises normal-hour MAE ×1.76 (B3) and ×1.79 (B1), inside H9's ran
 
 ## Amendments
 
-*None yet.* Each entry gives the date, the section and value or prediction changed, and why; the text above stays unchanged. The first planned entry is the measured autocorrelation at lags 1, 24 and 168 (section 3).
+All three were made on **2 October 2026**, after the toy task and the ablation had run, and **before any warehouse or shift-series result existed**. They came from an AI-assisted design review (see AI_LOG.md) and were approved by the candidate. The text above is unchanged; these entries override it where they conflict.
+
+### Amendment 1 · The §19 verdict rule (section 8; A-20)
+- **Replaces:** "learned useful structure if R_model(s) ≤ R_ref for every s", where R is the *relative* MAE increase from series 1 to series 4.
+- **Why:**
+  - Noise raises every forecaster's unavoidable error, and a good model's error is mostly that error. So the relative rule labels a perfect forecaster (one predicting λ) "simply adapted": its R is about +1.12, against B1's +0.88.
+  - It also credits B2: B2's error is dominated by the unchanged daily shape, so B2 rises only about 27%.
+- **New rule,** for each seed s:
+  - *learned useful structure* if the model beats the reference baseline on series 1, MAE₁(s) < MAE₁(ref), **and** its absolute increase MAE₄(s) − MAE₁(s) is no larger than the reference's;
+  - *simply adapted to the training distribution* if the increase is larger than the reference's for every s;
+  - *inconclusive* otherwise.
+- The original relative rule's outcome is still reported alongside, for transparency.
+
+### Amendment 2 · Length of the shift series (sections 2 and 8; A-20)
+- **Replaces:** "each 8 weeks on the test calendar after a 24-hour warm-up (1,344 targets)".
+- **New value:** each series is **52 weeks** (8,736 targets) after the 24-hour warm-up, starting on a Monday. Seed 202, the shared event stream and the four conditions are unchanged.
+- **Why:** counting the events in the seed-202 8-week series (data only, no model output) found **one** spike and three first-three-hour targets. H10, F4 and the spike half of H11 would have rested on a single event. 52 weeks gives about 34 spikes. The series is evaluation-only, so the cost is seconds.
+- **Effect on predictions:** none of the numbers in H9–H11 changes.
+
+### Amendment 3 · A fourth baseline, B4 (section 7; A-15)
+- **Adds:** B4, ŷ(t+1) = the mean of the training targets at the same hour of the week as t+1. That is 168 values, computed from training targets only.
+- **Why:**
+  - The generator repeats exactly every 168 hours, so the weekly average is the obvious simple baseline (§17: "Another simple baseline may be used if justified").
+  - The design review's closed-form estimate puts B4 about 23% below B1 on all-hours MAE (about 15.8 against 20.3). That is better than H6's whole predicted range for the attention model.
+- **Expectations stated now, before any warehouse result:**
+  - A-15's rule (best baseline on validation) will probably select **B4** as the reference.
+  - **H6 will then probably be refuted.** The 24-hour window holds one observation per hour of the week, while B4 averages 36.
+  - H5 is unchanged, because it concerns B1–B3 only.
+  - H6 and the A-27 verdict are scored as written, against whichever reference validation selects.

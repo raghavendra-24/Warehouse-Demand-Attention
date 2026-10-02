@@ -8,7 +8,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
 
 ### 1 · 2026-10-01 · Requirements analysis of the PRD
 - **Task requested:** analyse the PRD into functional and non-functional requirements, user flows, data model, API, UI, integrations, validation rules, error cases, ambiguities, assumptions (each justified), acceptance criteria, technical constraints, risks and clarification questions. No implementation.
-- **Generated output:** a long requirements analysis (about 57,000 words), kept outside the repository as working notes. Its main findings:
+- **Generated output:** a long requirements analysis (about 57,000 words). It was kept as working notes and is not part of the submission; its main findings are summarised here:
   - self-attention needs positional or time information;
   - the §16 diagram is off by one against §17;
   - seasonal naive y(t−23) is the oldest value in the window;
@@ -20,7 +20,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
 
 ### 2 · 2026-10-01 · Critical review of the analysis
 - **Task requested:** review the analysis as a senior engineer would. Sort its requirements into PRD-confirmed and inferred, and list ambiguities, missing requirements, recommended assumptions, scope boundaries and a final list of acceptance criteria.
-- **Generated output:** a review, kept outside the repository. Its main findings:
+- **Generated output:** a review, kept as working notes and not part of the submission. Its acceptance criteria became [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md). Its main findings:
   - the analysis is faithful to the PRD but heavily over-scoped;
   - seven requirements are misattributed;
   - its oracle and its gradient tolerance have technical flaws;
@@ -104,5 +104,22 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
     - V2's "finite means correct" claim is false: at logits [88.5, 87.5, 0], naive softmax returns finite zeros. It will be reported as refuted.
     - The FAC-15 test could not see an unregistered parameter.
     - The text-based prohibited-API scan missed aliases. It was replaced by an AST scan.
+- **Resulting understanding:** *(Candidate to complete.)*
+
+### 9 · 2026-10-02 · Toy task, ablation, and three Phase 0 amendments
+- **Task requested:**
+  - run the toy experiment (T-501) and the ablation (T-502);
+  - then review the architecture and plan with five sceptical AI reviewers, each checked by an adversarial verifier.
+- **Generated output:**
+  - `experiments/toy.py` and `experiments/ablation.py`, with their results;
+  - three PHASE0 amendments, implemented in `wda/config.py`, `wda/baselines.py` and `wda/metrics.py`:
+    1. the §19 verdict rule;
+    2. 52-week shift series;
+    3. baseline B4.
+- **Candidate modifications:** the candidate reviewed and approved the three amendments before any warehouse or shift result existed. *(Candidate to complete.)*
+- **Verification performed:**
+  - H1–H4 were scored against their frozen thresholds; all four hold.
+  - The verifiers rejected several reviewer claims, and the reasons are recorded with each claim. For example, the claim that paired arms start from different weights was refuted by the existing test.
+  - The upheld claims were checked by direct computation. The 8-week seed-202 shift series really has one spike, and the relative verdict rule really does label a perfect forecaster "simply adapted".
 - **Resulting understanding:** *(Candidate to complete.)*
 

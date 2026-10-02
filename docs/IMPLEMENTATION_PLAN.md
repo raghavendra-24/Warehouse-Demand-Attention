@@ -124,7 +124,7 @@ Drafted with AI assistance; see [AI_LOG.md](AI_LOG.md).
   - Each script runs in seconds.
 - **Estimate:** 40 min
 
-**Checkpoint A:** commit and push (A-28 advice).
+**Checkpoint A:** commit and push. A pushed checkpoint protects the work against an early cut-off.
 
 ---
 
@@ -320,7 +320,7 @@ Drafted with AI assistance; see [AI_LOG.md](AI_LOG.md).
 - **Depends on:** T-507
 - **Requirements:** §22; A-24; FAC-51, FAC-67
 - **Acceptance criteria:**
-  - A fresh clone installs, passes the tests, and regenerates `results/data` with an empty `git diff` (excluding `run.json`, which holds the runtime).
+  - A fresh clone installs and passes the tests. `python -m experiments.run_all` then regenerates every result. `git diff` shows the generated data unchanged (excluding `run.json`, which holds the runtime), and the largest change in any trained metric is the stated tolerance (FAC-51).
   - One warehouse rerun gives the stated tolerance.
   - Assessor access is confirmed.
 - **Estimate:** 30 min
@@ -402,6 +402,7 @@ Drafted with AI assistance; see [AI_LOG.md](AI_LOG.md).
 - **Acceptance criteria:**
   - The candidate reads `wda/attention.py`, `wda/gradcheck.py`, `wda/train.py` and the derivation.
   - The candidate reruns the tiny-example trace by hand and can explain every line of the attention core and every choice in ASSUMPTIONS.
+  - Explain-back: for each H, V and F ID, one sentence each on the mechanism, where its threshold comes from, and what a refutation means. These become raw material for the reflection.
   - The AI-log "resulting understanding" fields are written in the candidate's own words.
 - **Estimate:** 90 min
 
