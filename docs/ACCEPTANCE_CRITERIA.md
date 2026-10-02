@@ -221,43 +221,45 @@ Pass/fail criteria the implementation is checked against (FAC-01 … FAC-69). So
 
 **§29's 18 deliverables.** Every box must be ticked. A box is ticked when all the MUST FACs listed on it pass.
 
-- [ ] 1. Source code: FAC-12, FAC-31, FAC-47, FAC-65
-- [ ] 2. README: FAC-49, FAC-66
-- [ ] 3. Phase 0 design document: FAC-01 to FAC-06
-- [ ] 4. Mathematical derivation: FAC-16, FAC-17, FAC-18
-- [ ] 5. Synthetic dataset generator: FAC-08, FAC-10, FAC-11
-- [ ] 6. First-principles attention implementation: FAC-12, FAC-13, FAC-15, FAC-21
-- [ ] 7. Gradient verification: FAC-19, FAC-20, FAC-56
-- [ ] 8. Toy learning experiment: FAC-23, FAC-24
-- [ ] 9. Warehouse demand model: FAC-31, FAC-32
-- [ ] 10. Baseline implementation: FAC-34, FAC-35, FAC-36
-- [ ] 11. Ablation experiment: FAC-28, FAC-29, FAC-30
-- [ ] 12. Generalization experiment: FAC-41, FAC-42, FAC-44
-- [ ] 13. Failure investigation: FAC-45
-- [ ] 14. Test suite: FAC-53 to FAC-57
-- [ ] 15. Experiment results: FAC-52
-- [ ] 16. Reflection: FAC-63
-- [ ] 17. AI assistance log: FAC-61, FAC-62
-- [ ] 18. Demo instructions or recording: FAC-68
+- [x] 1. Source code: FAC-12, FAC-31, FAC-47, FAC-65
+- [x] 2. README: FAC-49, FAC-66
+- [x] 3. Phase 0 design document: FAC-01 to FAC-06
+- [x] 4. Mathematical derivation: FAC-16, FAC-17, FAC-18
+- [x] 5. Synthetic dataset generator: FAC-08, FAC-10, FAC-11
+- [x] 6. First-principles attention implementation: FAC-12, FAC-13, FAC-15, FAC-21
+- [x] 7. Gradient verification: FAC-19, FAC-20, FAC-56
+- [x] 8. Toy learning experiment: FAC-23, FAC-24
+- [x] 9. Warehouse demand model: FAC-31, FAC-32
+- [x] 10. Baseline implementation: FAC-34, FAC-35, FAC-36
+- [x] 11. Ablation experiment: FAC-28, FAC-29, FAC-30
+- [x] 12. Generalization experiment: FAC-41, FAC-42, FAC-44
+- [x] 13. Failure investigation: FAC-45
+- [x] 14. Test suite: FAC-53 to FAC-57
+- [x] 15. Experiment results: FAC-52
+- [x] 16. Reflection: FAC-63
+- [ ] 17. AI assistance log: FAC-61, FAC-62 (see the status note below)
+- [x] 18. Demo instructions or recording: FAC-68
 
 **Required items without a §29 entry.** Also gating:
 
-- [ ] Training dynamics (§13, §31 MUST): FAC-26
-- [ ] Numerical stability considered (§11 "must consider"): FAC-21
-- [ ] Cross-problem integration (§21 "must"): FAC-47, FAC-48
-- [ ] Reproducibility documented (§22 "must"): FAC-49 to FAC-51
-- [ ] Evaluation methodology (§18): FAC-37, FAC-38, FAC-39
-- [ ] No hidden problems (§24): FAC-60
-- [ ] Submitted on time, and readable by the assessors: FAC-67
+- [x] Training dynamics (§13, §31 MUST): FAC-26
+- [x] Numerical stability considered (§11 "must consider"): FAC-21
+- [x] Cross-problem integration (§21 "must"): FAC-47, FAC-48
+- [x] Reproducibility documented (§22 "must"): FAC-49 to FAC-51
+- [x] Evaluation methodology (§18): FAC-37, FAC-38, FAC-39
+- [x] No hidden problems (§24): FAC-60
+- [x] Submitted on time, and readable by the assessors: FAC-67
 
 **§30's seven demo parts.** Each must point at a working command or a committed artifact.
 
-- [ ] Part 1, Attention: the FAC-12 trace
-- [ ] Part 2, Gradient verification: the FAC-20 table
-- [ ] Part 3, Training: the FAC-24 curves and metric
-- [ ] Part 4, Warehouse prediction: the FAC-35 table
-- [ ] Part 5, Ablation: the FAC-30 hypothesis vs result
-- [ ] Part 6, Generalization: the FAC-44 table and verdict
-- [ ] Part 7, Failure: the FAC-45 case
+- [x] Part 1, Attention: the FAC-12 trace
+- [x] Part 2, Gradient verification: the FAC-20 table
+- [x] Part 3, Training: the FAC-24 curves and metric
+- [x] Part 4, Warehouse prediction: the FAC-35 table
+- [x] Part 5, Ablation: the FAC-30 hypothesis vs result
+- [x] Part 6, Generalization: the FAC-44 table and verdict
+- [x] Part 7, Failure: the FAC-45 case
+
+**Status at submission (3 October 2026).** Every box is ticked except 17. FAC-62 is met, and so is every part of FAC-61 except its last clause: the "resulting understanding" fields were drafted with AI assistance at the candidate's request, as [AI_LOG.md](AI_LOG.md) states, rather than written in the candidate's own words. The evidence for the other boxes is in the README deliverables map and in [RESULTS.md](RESULTS.md) section 1.
 
 The 14 SHOULD FACs do not block Done. Debugging evidence (§24 "should", FAC-59) is listed among them, not among the gates.

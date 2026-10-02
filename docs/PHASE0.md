@@ -342,7 +342,7 @@ Higher noise raises normal-hour MAE ×1.76 (B3) and ×1.79 (B1), inside H9's ran
 
 ## Amendments
 
-All three were made on **2 October 2026**, after the toy task and the ablation had run, and **before any warehouse or shift-series result existed**. They came from an AI-assisted design review (see AI_LOG.md) and were approved by the candidate. The text above is unchanged; these entries override it where they conflict.
+All three were made on **2 October 2026**, after the toy task and the ablation had run, and **before any warehouse or shift-series result existed**. They came from an AI-assisted design review (see AI_LOG.md) and were approved by the candidate. The text above is unchanged; these entries override it where they conflict. Record 4, added on 3 October 2026, records a measurement and changes nothing.
 
 ### Amendment 1 · The §19 verdict rule (section 8; A-20)
 - **Replaces:** "learned useful structure if R_model(s) ≤ R_ref for every s", where R is the *relative* MAE increase from series 1 to series 4.
@@ -371,3 +371,9 @@ All three were made on **2 October 2026**, after the toy task and the ablation h
   - **H6 will then probably be refuted.** The 24-hour window holds one observation per hour of the week, while B4 averages 36.
   - H5 is unchanged, because it concerns B1–B3 only.
   - H6 and the A-27 verdict are scored as written, against whichever reference validation selects.
+
+### Record 4 · Measured autocorrelation (section 3; FAC-10)
+- **Added:** 3 October 2026. This is a record, not a change: no design value or prediction is affected.
+- **Measured:** the first generator run (commit `e1fca63`, 2 October 2026, before any training) gave 0.84 / 0.66 / 0.68 at lags 1 / 24 / 168, against the expected 0.84 / 0.63 / 0.66 ([results/data/table.md](../results/data/table.md)).
+- **Check:** every gap is at most 0.03, well below the 0.1 that section 3 sets as the trigger for investigating a generator bug.
+- **Note:** section 3 says this entry is added at the first generator run. It was due then and was added late, at the final check before submission.

@@ -122,6 +122,8 @@ The source table has eight inputs (80 to 1000); the stable output sums to 1.0000
 - attention: 2.810, 2.818, 2.802 → 0.0010, 0.0009, 0.0009;
 - uniform control: 2.796, 2.801, 2.788 → 2.264, 2.265, 2.231.
 
+![Toy task: training and validation loss, and validation accuracy, for attention and the uniform-attention control](../results/toy/curves.png)
+
 [results/toy/metrics.json]
 
 **4.2 Training behaviour.** Attention reaches 95% validation accuracy at steps 600, 550 and 500 (best steps 700, 650, 600); the control never does. The curve is a short plateau followed by sudden learning. For seed 0:
@@ -164,6 +166,8 @@ Seeds 1 and 2 have the same shape: 0.1545 and 0.1655 at step 200, then 0.9980 an
 ## 5. Training dynamics: softmax saturation in unscaled attention (§13)
 
 The chain below follows §13's form, for d_k = 64 and seeds 0, 1 and 2 unless stated. Each link cites quantities logged in the ablation runs at step 0 and every evaluation (`results/ablation/metrics.json`); `results/ablation/curves.png` plots validation loss, readout entropy and ‖∂L/∂W_Q‖ against step.
+
+![Ablation: validation loss, readout-row attention entropy and query-weight gradient norm, scaled and unscaled at d_k = 4 and 64, three seeds](../results/ablation/curves.png)
 
 **Link 1. Large logits.** At step 0 the logit SD is 7.735, 8.241 and 8.237 unscaled, against 0.967, 1.030 and 1.030 scaled.
 
@@ -298,6 +302,8 @@ Every forecaster, baselines included, is scored by the same function (`score` in
 
 Validation: MAE 15.57 against 15.37 ± 0.18 (−0.20, −1.3%); RMSE 30.83 against 25.31 ± 0.70 (−5.52, −17.9%). [results/warehouse/table.md]
 
+![The first week of the test split: actual demand, the attention model (seed 0) and baselines B1–B4](../results/warehouse/forecast_week_test.png)
+
 ### 7.2 Test MAE by A-11 group
 
 | Group | Count | B1 | B2 | B3 | B4 | pred_s0 | pred_s1 | pred_s2 | ctrl_s0 | ctrl_s1 | ctrl_s2 |
@@ -357,6 +363,8 @@ The model's MAE minus B4's, split into each group's contribution, Δ_group × co
 
 **The attention figure is descriptive, not causal** (§16). In `results/warehouse/attention_test.png` (seed 0, test), the average readout row is nearly flat, from 0.0316 to 0.0616 per position, with 0.049 on t−23 and 0.041 on t. Single plotted windows concentrate on a band of neighbouring hours (peaks of about 0.16–0.18) whose position varies between windows. A weight says where the readout looks. Section 9 shows that the values carry little demand information, so a high weight on an hour does not mean its demand drives the forecast. [results/warehouse/metrics.json]
 
+![Readout-row attention weights by input position, seed 0, test split: the average over windows and three single windows (descriptive, not causal)](../results/warehouse/attention_test.png)
+
 *Training note:* the best validation steps were 3,350, 4,000 and 2,700 of 4,000. Seed 1 may have been cut short by the budget.
 
 ## 8. Generalisation under distribution shift (§19; H9–H11)
@@ -392,6 +400,8 @@ Each series is 52 weeks after a 24-hour warm-up, giving 8,736 targets (Amendment
 | Uniform control | 43.32 ± 0.02 | 46.18 ± 0.02 | 48.07 ± 0.16 | 51.05 ± 0.24 | — |
 
 [results/shift/table.md; PHASE0 §8]
+
+![MAE on all hours under each shift condition: baselines B1–B4 and the attention model (mean ± SD, 3 seeds)](../results/shift/mae_by_condition.png)
 
 H9–H11 are confirmed (Section 1). Two further effects have the same sign in all seeds:
 - Under higher noise, the model falls *behind* B4: 25.31, 25.60 and 25.92 against 24.98.
@@ -457,6 +467,8 @@ H9–H11 are confirmed (Section 1). Two further effects have the same sign in al
 | 16 | 3312 | 3380 | 530, 435, 490 | 0.999 / 508 | 0.045 / 317 | 655 |
 
 The source table also has k = 0.5, 1.5 and 3, and `results/failure/dose_response.png` plots the curves. [results/failure/table.md]
+
+![Dose-response: expected demand, B1 and the attention model during spikes as the spike scale k grows](../results/failure/dose_response.png)
 
 B1 tracks demand at every k, and the model plateaus. Seed 0 moves its attention onto the spike tokens, and its forecast converges to roughly their value level (411 against 412 at k = 8). Seed 1 moves its attention *away* from them at large k (peak 0.184 at k = 3 in the source table, then 0.045 at k = 16), yet it plateaus as well. The weights behave differently in the two seeds, so they are not the common cause. The small value gain is.
 

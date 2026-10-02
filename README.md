@@ -47,13 +47,13 @@ Every command runs from the repository root, in the `-m` form, so that the `wda`
 | Gradient verification | `python -m experiments.gradcheck` | < 1 s |
 | Numerical stability | `python -m experiments.stability` | < 1 s |
 | Toy task (training) | `python -m experiments.toy` | ~70–90 s |
-| Ablation | `python -m experiments.ablation` | ~4 min |
+| Ablation | `python -m experiments.ablation` | ~4–4.5 min |
 | Warehouse training and evaluation | `python -m experiments.warehouse` | ~3 min |
 | Generalisation (distribution shift) | `python -m experiments.shift` | ~5 s |
 | Failure analysis | `python -m experiments.failure` | ~2 s |
-| **Everything, in order** | `python -m experiments.run_all` | **486 s** |
+| **Everything, in order** | `python -m experiments.run_all` | **~7.5–8 min** (446 s at the fresh-clone check) |
 
-\*Measured on an Intel Core i5-1335U laptop with 4 PyTorch threads. Every stage writes `results/<stage>/`: `metrics.json`, `table.md`, figures, and `run.json` (runtime, versions, CPU, git revision).
+\*Measured on an Intel Core i5-1335U laptop with 4 PyTorch threads; each stage's own runtime is in its `run.json`. A busy machine is slower: an idle one ran the toy task in about 25 s. Every stage writes `results/<stage>/`: `metrics.json`, `table.md`, figures, and `run.json` (runtime, versions, CPU, git revision).
 
 The test split is scored only when `FINAL_TEST = True` in `wda/config.py`. It was switched on once, in commit `abf1a8e`, after the "freeze configuration" commit (A-12, FAC-32).
 
@@ -97,10 +97,36 @@ A mutation check, which plants bugs in the attention core, confirmed that each o
 | 7 | gradient-check tensors |
 | 0, 1 | `prereg/init_stats.py`, the pre-implementation calculation |
 
+## Configuration (§22)
+
+Every value lives in [wda/config.py](wda/config.py), and each `results/<stage>/metrics.json` records the resolved configuration it ran with. The reasons for each value are in [docs/PHASE0.md](docs/PHASE0.md).
+
+**Dataset generation** (`WarehouseDataConfig`, PHASE0 section 2):
+
+| Parameter | Value |
+|---|---|
+| Length | 52 weeks, 8,736 hours, starting on a Monday; seed 101 |
+| Expected level | λ = max(1, m · (B + D(h) + W(d))), where m is the active event's multiplier (1 if none); B = 100 orders/h |
+| Daily profile D(h) | 60·cos(2π(h − 14)/24) + 15·cos(4π(h − 14)/24), peak at 14:00 |
+| Weekday offsets W(d) | +5 Monday–Thursday, 0 Friday, −15 Saturday, −25 Sunday |
+| Noise | negative binomial, Var = λ + λ²/r with r = 100 |
+| Spikes | onset 0.004 per hour, 3–6 h, level × 2–4 |
+| Drops | onset 0.002 per hour, 2–4 h, level × 0.3–0.6 |
+| Splits | by the target's week: 1–36 train, 37–44 validation, 45–52 test (6,024 / 1,344 / 1,344 windows) |
+| Window | 24 hours, y(t − 23) … y(t), forecasting y(t + 1) |
+| Shift series (`SHIFT_SERIES`) | four 52-week series, seed 202: control, higher noise (r = 14), larger spikes (spike multiplier × 2), both |
+| Toy task (`ToyDataConfig`) | 8 key–value pairs plus a query, 16 keys and 16 values; 50,000 / 2,000 / 5,000 sequences, seeds 301 / 302 / 303 |
+
+**Models** (`ModelConfig`, `TOY_MODEL`, `WAREHOUSE_MODEL`; PHASE0 "Design values"): one self-attention layer, one head, no mask, no residual path, d_k = d_v = 16.
+- Toy: 9 tokens × 33 features, no input projection, W_Q, W_K, W_V ~ N(0, 1/2), a linear head to 16 classes, 1,856 parameters. The ablation uses d_k ∈ {4, 64}, scaled and unscaled.
+- Warehouse: 24 tokens × 5 features (standardised demand, sin/cos of hour and of weekday), projected to d_model = 16 with W_in ~ N(0, 1/3); W_Q, W_K, W_V ~ N(0, 1/16); a linear head to one output; 881 parameters.
+
+**Training** (`TrainConfig`): Adam with learning rate 1e-3, β = (0.9, 0.999) and ε = 1e-8; batch 256; 3,000 steps (toy) or 4,000 steps (warehouse); evaluation every 50 steps; training seeds 0, 1 and 2, shared by paired arms. No weight decay, learning-rate schedule or gradient clipping. The weights kept are those with the best validation accuracy (toy) or the best validation MAE (warehouse).
+
 ## Reproducibility
 
 - **Exact:** the generated data, and every result table, metrics file and figure, are reproduced by `python -m experiments.run_all` on the same machine. `git diff` shows no change apart from `run.json`.
-- **Within a tolerance:** when the machine is busy, float32 model quantities can differ in their last bit, about 1e-7 relative, because the maths library changes its summation order. This was observed once, in four ablation gradient norms.
+- **Within a tolerance:** when the machine is busy, float32 model quantities can differ in their last bit, about 1e-7 relative, because the maths library changes its summation order. This was observed three times: in the shift results after a refactor (DEBUGGING episode 3), in four ablation gradient norms at the fresh-clone check below, and in eight failure-slice means (at most 7e-9 relative) during an earlier take of the demo recording, on a busy machine.
 - **Not promised:** bit-identical training on a different machine (A-24).
 - **Pre-submission check (T-602), done on 2 October 2026:** a fresh clone installed from `requirements.txt`, all 63 tests (then the full suite) passed, and `run_all` regenerated every result in 446 s. Every result file matched the committed version except four ablation gradient norms, which differed in the last float32 bit. The committed run had been made while the machine was busy; the committed ablation file now comes from that clean rerun.
 
@@ -125,7 +151,7 @@ A mutation check, which plants bugs in the attention core, confirmed that each o
 | 15 | Experiment results | [results/](results), [docs/RESULTS.md](docs/RESULTS.md) |
 | 16 | Reflection | [docs/REFLECTION.md](docs/REFLECTION.md) |
 | 17 | AI assistance log | [docs/AI_LOG.md](docs/AI_LOG.md) |
-| 18 | Demo instructions | [docs/DEMO.md](docs/DEMO.md) |
+| 18 | Demo instructions and recording | [docs/DEMO.md](docs/DEMO.md): the instructions, and a terminal recording of all seven parts (link in the submission form) |
 
 Also included:
 - [docs/ASSUMPTIONS.md](docs/ASSUMPTIONS.md): A-01 … A-27, with the reason for each;

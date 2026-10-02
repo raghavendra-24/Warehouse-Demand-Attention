@@ -6,9 +6,9 @@ Reproducible live-demo instructions (PRD §30). Parts 1 and 2 run live in second
 |---|---|---|---|---|
 | 1 · Attention | The seven §7 operations on a tiny example worked by hand | `python -m experiments.attention_trace` | < 1 s | console; [results/trace/table.md](../results/trace/table.md); [wda/attention.py](../wda/attention.py) |
 | 2 · Gradient verification | Autograd against float64 central differences, every entry | `python -m experiments.gradcheck` | < 1 s | [results/gradcheck/table.md](../results/gradcheck/table.md) |
-| 3 · Training | The toy task learning, against the uniform-attention control | (rerun: `python -m experiments.toy`) | ~70 s | [results/toy/curves.png](../results/toy/curves.png), [results/toy/table.md](../results/toy/table.md) |
+| 3 · Training | The toy task learning, against the uniform-attention control | (rerun: `python -m experiments.toy`) | ~25–90 s | [results/toy/curves.png](../results/toy/curves.png), [results/toy/table.md](../results/toy/table.md) |
 | 4 · Warehouse prediction | The attention model against the baselines B1–B4, on the test split | (rerun: `python -m experiments.warehouse`) | ~3 min | [results/warehouse/table.md](../results/warehouse/table.md), `forecast_week_test.png`, `attention_test.png` |
-| 5 · Ablation | Scaled vs unscaled attention: prediction, then observation | (rerun: `python -m experiments.ablation`) | ~4 min | [results/ablation/table.md](../results/ablation/table.md), `curves.png` |
+| 5 · Ablation | Scaled vs unscaled attention: prediction, then observation | (rerun: `python -m experiments.ablation`) | ~4–4.5 min | [results/ablation/table.md](../results/ablation/table.md), `curves.png` |
 | 6 · Generalisation | Four 52-week shifted series, and the §19 verdict | `python -m experiments.shift` | ~5 s | [results/shift/table.md](../results/shift/table.md), `mae_by_condition.png` |
 | 7 · Failure | Forecasts saturating during large spikes, and why | `python -m experiments.failure` | ~2 s | [results/failure/table.md](../results/failure/table.md), `dose_response.png` |
 
@@ -43,4 +43,12 @@ Parts 6 and 7 are fast enough to run live as well, because they load the saved w
    - The value path carries almost no demand magnitude, so the convex-combination readout can only re-weight tokens.
    - Mention the two refuted explanations, and the proposed fix: a direct path for demand magnitude.
 
-A recording is not provided. §30 accepts reproducible live-demo instructions instead.
+## Recording
+
+A terminal recording of all seven parts, in the order above, is linked in the submission form (4 minutes, no voice-over). It was made from a fresh clone of tag `v1.0-submission`, with the environment installed from `requirements.txt`. The code and results are the same in `v1.1-submission`, which changes only documents.
+- every command is typed and run live, including the full toy, warehouse and ablation training runs;
+- the long training waits are shortened and marked "time-lapse" in the title bar;
+- the committed figures are shown after the stage that produces them;
+- the clone's path is shown as `~/Warehouse-Demand-Attention`.
+
+The rerun in the recording reproduced every committed `metrics.json` bit for bit; only the `run.json` files (runtime, git revision) changed.
