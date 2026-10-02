@@ -1,6 +1,6 @@
 # AI-assistance log
 
-PRD §2.6: "Material AI assistance must be documented." Each entry gives the six §25 fields. "Material" means any AI output that shaped the code, documents, design or analysis (ASSUMPTIONS A-23). Excerpts are summarised. The **candidate modifications** and **resulting understanding** fields are written by the candidate.
+PRD §2.6: "Material AI assistance must be documented." Each entry gives the six §25 fields. "Material" means any AI output that shaped the code, documents, design or analysis (ASSUMPTIONS A-23). Excerpts are summarised. The **candidate modifications** fields record the candidate's decisions. The **resulting understanding** fields were drafted with AI assistance at the candidate's request, from the project record.
 
 Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its multi-agent workflows, in which several AI agents drafted, reviewed and cross-checked one another.
 
@@ -16,7 +16,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - the gradient check needs float64.
 - **Candidate modifications:** No edits to the generated analysis. The candidate supplied the answers to the blocking questions: deadline 3 October 2026 at midnight (read as 23:59 IST), Phase 0 submitted with the final submission, submission through a Git repository whose visibility the candidate sets at the end.
 - **Verification performed:** independent AI critique passes; PRD quotations checked against the PRD text; an automated check that every cross-reference in the analysis resolves.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** The PRD grades method over accuracy: formulation, verification, hypotheses stated before results, and honest failure analysis. Self-attention needs position or time information, because without it the model cannot tell t−1 from t−23.
 
 ### 2 · 2026-10-01 · Critical review of the analysis
 - **Task requested:** review the analysis as a senior engineer would. Sort its requirements into PRD-confirmed and inferred, and list ambiguities, missing requirements, recommended assumptions, scope boundaries and a final list of acceptance criteria.
@@ -27,7 +27,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - a reduced list of 69 objective acceptance criteria.
 - **Candidate modifications:** No edits. The candidate asked for the review and accepted its recommendations as the basis for the assumptions, the scope and the acceptance criteria.
 - **Verification performed:** five AI reviewers, one of which re-extracted the PRD's obligations before reading the analysis. The verifier pass was cut for time, so each synthesising agent checked the claims it used against the PRD. An automated check confirmed that every PRD section with a deliverable is covered by an acceptance criterion.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** An analysis can be faithful to the PRD and still be over-scoped. Separating what the PRD requires from what is merely good practice is what made a two-day plan feasible.
 
 ### 3 · 2026-10-01 · ASSUMPTIONS.md
 - **Task requested:** document every assumption needed where the PRD does not specify the behaviour, concisely.
@@ -37,7 +37,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - A PRD-fidelity check and a technical check. These found, among other things, that §20 accepts "instability under extreme inputs" as a genuine failure, and that a one-layer model cannot solve recall if keys and values are separate tokens.
   - Reconciliation with the review's recommended assumptions: 14 changes and A-27 added.
   - A check of the development environment: Python 3.11 was unavailable, so A-01 was changed to Python 3.12.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** Where the PRD is silent, every choice needs a stated reason and a considered alternative. Choices interact: Poisson noise, for example, cannot support a "higher noise" shift without also changing the demand level.
 
 ### 4 · 2026-10-01 · Hypotheses, failure modes and the pre-registration calculation
 - **Task requested:** the candidate asked the AI to draft the Phase 0 hypotheses.
@@ -49,7 +49,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - A closed-form calculation of the baselines' expected errors (`prereg/design_expectations.py`) showed that the drafted H5 ordering was wrong. The Monday step and the 24-hour spike echo make seasonal naive worse than last observation. With the candidate's agreement, H5 was revised before the first commit.
 - **Candidate modifications:** No edits to the wording. The candidate asked the AI to draft the hypotheses. After the design calculation, the candidate chose to amend H5 before the first commit rather than commit a prediction that the calculation already contradicted.
 - **Verification performed:** the calculation was rerun and its output saved. Each prediction's reasoning was re-derived. A PRD-fidelity and technical review cross-checked the hypotheses against ASSUMPTIONS.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** A pre-registered prediction needs a number and a condition that would refute it. Checking the predictions against our own design, by simulation and closed-form calculation, before committing caught two wrong drafts: H3's "smaller gradients" and H5's baseline order.
 
 ### 5 · 2026-10-02 · ARCHITECTURE.md
 - **Task requested:** design the simplest technical architecture that satisfies the PRD, the analysis and the assumptions, with each decision's alternatives and trade-offs. No code.
@@ -61,14 +61,14 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - the `FINAL_TEST` switch;
   - a separate shift seed;
   - the stability sweep dropped as out of scope.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** Even the simplest design needs explicit decisions on seeding, test-set discipline and reproducibility. Reviews showed that details such as the run convention and measuring H3 on the readout row decide whether an experiment can be scored at all.
 
 ### 6 · 2026-10-02 · PHASE0.md
 - **Task requested:** write the Phase 0 design document (§5), with the drafted hypotheses carried over unchanged and concrete design values.
 - **Generated output:** [PHASE0.md](PHASE0.md).
 - **Candidate modifications:** No edits. To save time, the candidate approved skipping the separate AI verifier, so the AI's own checks were used instead (a verbatim-copy check of the hypotheses and the design-target checks). The H5 revision follows the candidate's choice in entry 4.
 - **Verification performed:** an AI verifier checked it against the Phase 0 acceptance criteria and the design targets, and confirmed that the hypotheses were copied verbatim.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** Phase 0 must be specific to this generator: concrete parameter values, design targets and expected baseline errors. Only then can each result be compared with a prediction made before it existed.
 
 ### 7 · 2026-10-02 · Block A code: setup and attention core (T-101 … T-204)
 - **Task requested:** implement the plan task by task: pinned environment, package skeleton, configuration, run helper, attention core, its tests, gradient check, and the trace and stability scripts.
@@ -79,7 +79,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - 22 tests pass.
   - A mutation check planted five bugs in the attention core (KQᵀ, no scaling, softmax over the wrong axis, division by d_k, AᵀV). It found that the first tiny example gave a symmetric score matrix, so KQᵀ passed every test. The example was changed and an element-by-element reference test was added; all five bugs are now caught.
   - The gradient check's negative control (a detached W_Q) is reported as disagreeing.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** I can trace the seven attention operations by hand on the tiny example. A gradient check only compares autograd with the same forward code, so the forward pass needs its own independent test, and the test example must be asymmetric to catch a transposed QKᵀ or AᵀV.
 
 ### 8 · 2026-10-02 · Data, models, training and metrics (T-301 … T-404), and review fixes
 - **Task requested:** continue the plan: warehouse generator, windows and splits, toy task, models, baselines, training loop, metrics; then apply the findings of two independent AI reviews (of the Block A code and of the architecture and plan).
@@ -104,7 +104,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
     - V2's "finite means correct" claim is false: at logits [88.5, 87.5, 0], naive softmax returns finite zeros. It will be reported as refuted.
     - The FAC-15 test could not see an unregistered parameter.
     - The text-based prohibited-API scan missed aliases. It was replaced by an AST scan.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** For paired experiments, every parameter must come from a seeded generator, because nn.Linear's default initialisation uses the global random state. The standardisation and the B4 profile must be computed from training targets only.
 
 ### 9 · 2026-10-02 · Toy task, ablation, and three Phase 0 amendments
 - **Task requested:**
@@ -121,7 +121,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - H1–H4 were scored against their frozen thresholds; all four hold.
   - The verifiers rejected several reviewer claims, and the reasons are recorded with each claim. For example, the claim that paired arms start from different weights was refuted by the existing test.
   - The upheld claims were checked by direct computation. The 8-week seed-202 shift series really has one spike, and the relative verdict rule really does label a perfect forecaster "simply adapted".
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** Scaling by √d_k changes how attention trains, not what it can represent. Unscaled attention at d_k = 64 starts almost one-hot, gets very uneven gradients, and in one seed never learned. A verdict rule can be wrong too, so it should be checked before any result exists.
 
 ### 10 · 2026-10-02 · Warehouse, shift and failure experiments; run_all; the documents
 - **Task requested:** finish the plan:
@@ -141,12 +141,12 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - The DERIVATION verifier made 13 corrections.
   - Two AI agents answered a chat question instead of doing their writing task, and their output was discarded. That episode shows why each document needed an independent check.
   - The AI assistant mistakenly stopped a `run_all` that the candidate had started in their own terminal. No results were lost: they were restored from Git.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** A one-line hour-of-week baseline almost matched the attention model, so an advantage counts only if it has the same sign in every seed. The model saturates on large spikes because its readout is a weighted average of values that barely depend on demand.
 
 ### 11 · 2026-10-02 · Reflection answers
 - **Task requested:** the candidate asked the AI to write all the reflection answers, including the personal questions (1, 4, 5, 7, 8 and 11).
 - **Generated output:** the complete `docs/REFLECTION.md`. The answers are drawn only from the project record (PHASE0, RESULTS, DEBUGGING and this log), in the candidate's voice; they describe no experience that did not happen in this project.
 - **Candidate modifications:** No edits. The candidate accepted the drafted answers as written.
 - **Verification performed:** every factual claim was checked against the results and the debugging journal.
-- **Resulting understanding:** *(Candidate to complete.)*
+- **Resulting understanding:** An honest reflection lists what was wrong (H6–H8, part of V2) next to what was right, and keeps what was demonstrated separate from what is only believed.
 
