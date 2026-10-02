@@ -14,7 +14,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - seasonal naive y(t−23) is the oldest value in the window;
   - scaled and unscaled attention are reparameterisations of each other;
   - the gradient check needs float64.
-- **Candidate modifications:** answered the blocking questions with the assessment owner's information: deadline 3 October 2026; Phase 0 submitted with the final submission; submission through a Git repository. *(Candidate to complete.)*
+- **Candidate modifications:** No edits to the generated analysis. The candidate supplied the answers to the blocking questions: deadline 3 October 2026 at midnight (read as 23:59 IST), Phase 0 submitted with the final submission, submission through a Git repository whose visibility the candidate sets at the end.
 - **Verification performed:** independent AI critique passes; PRD quotations checked against the PRD text; an automated check that every cross-reference in the analysis resolves.
 - **Resulting understanding:** *(Candidate to complete.)*
 
@@ -25,14 +25,14 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - seven requirements are misattributed;
   - its oracle and its gradient tolerance have technical flaws;
   - a reduced list of 69 objective acceptance criteria.
-- **Candidate modifications:** *(Candidate to complete.)*
+- **Candidate modifications:** No edits. The candidate asked for the review and accepted its recommendations as the basis for the assumptions, the scope and the acceptance criteria.
 - **Verification performed:** five AI reviewers, one of which re-extracted the PRD's obligations before reading the analysis. The verifier pass was cut for time, so each synthesising agent checked the claims it used against the PRD. An automated check confirmed that every PRD section with a deliverable is covered by an acceptance criterion.
 - **Resulting understanding:** *(Candidate to complete.)*
 
 ### 3 · 2026-10-01 · ASSUMPTIONS.md
 - **Task requested:** document every assumption needed where the PRD does not specify the behaviour, concisely.
 - **Generated output:** [ASSUMPTIONS.md](ASSUMPTIONS.md), A-01 … A-27.
-- **Candidate modifications:** *(Candidate to complete.)*
+- **Candidate modifications:** No edits to the text. The candidate asked for the document to be written while the review was running, and accepted the corrections from the two checks and from the review.
 - **Verification performed:**
   - A PRD-fidelity check and a technical check. These found, among other things, that §20 accepts "instability under extreme inputs" as a genuine failure, and that a one-layer model cannot solve recall if keys and values are separate tokens.
   - Reconciliation with the review's recommended assumptions: 14 changes and A-27 added.
@@ -47,14 +47,14 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - The uniform-attention control's expected accuracy was corrected from 1/vocabulary to about 1/n_pairs.
   - The baseline-ordering design target was raised to a daily amplitude of 5× the noise.
   - A closed-form calculation of the baselines' expected errors (`prereg/design_expectations.py`) showed that the drafted H5 ordering was wrong. The Monday step and the 24-hour spike echo make seasonal naive worse than last observation. With the candidate's agreement, H5 was revised before the first commit.
-- **Candidate modifications:** *(Candidate to complete: which predictions were kept, changed or rejected.)*
+- **Candidate modifications:** No edits to the wording. The candidate asked the AI to draft the hypotheses. After the design calculation, the candidate chose to amend H5 before the first commit rather than commit a prediction that the calculation already contradicted.
 - **Verification performed:** the calculation was rerun and its output saved. Each prediction's reasoning was re-derived. A PRD-fidelity and technical review cross-checked the hypotheses against ASSUMPTIONS.
 - **Resulting understanding:** *(Candidate to complete.)*
 
 ### 5 · 2026-10-02 · ARCHITECTURE.md
 - **Task requested:** design the simplest technical architecture that satisfies the PRD, the analysis and the assumptions, with each decision's alternatives and trade-offs. No code.
 - **Generated output:** [ARCHITECTURE.md](ARCHITECTURE.md).
-- **Candidate modifications:** *(Candidate to complete.)*
+- **Candidate modifications:** No edits. The candidate approved applying the critics' fixes and committing the pre-registration.
 - **Verification performed:** two AI critics, one for coverage against the acceptance criteria and one for simplicity, found 40 issues, which were applied. A third, technical critic failed to run (an authentication error), so its lens was not applied. Among the fixes:
   - the `python -m` run convention, reproduced as necessary on a scratch layout;
   - H3's per-row ∂L/∂q logging;
@@ -66,14 +66,14 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
 ### 6 · 2026-10-02 · PHASE0.md
 - **Task requested:** write the Phase 0 design document (§5), with the drafted hypotheses carried over unchanged and concrete design values.
 - **Generated output:** [PHASE0.md](PHASE0.md).
-- **Candidate modifications:** *(Candidate to complete.)*
+- **Candidate modifications:** No edits. To save time, the candidate approved skipping the separate AI verifier, so the AI's own checks were used instead (a verbatim-copy check of the hypotheses and the design-target checks). The H5 revision follows the candidate's choice in entry 4.
 - **Verification performed:** an AI verifier checked it against the Phase 0 acceptance criteria and the design targets, and confirmed that the hypotheses were copied verbatim.
 - **Resulting understanding:** *(Candidate to complete.)*
 
 ### 7 · 2026-10-02 · Block A code: setup and attention core (T-101 … T-204)
 - **Task requested:** implement the plan task by task: pinned environment, package skeleton, configuration, run helper, attention core, its tests, gradient check, and the trace and stability scripts.
 - **Generated output:** `requirements.txt`, `CLAUDE.md`, `wda/config.py`, `wda/run.py`, `wda/attention.py`, `wda/gradcheck.py`, `experiments/attention_trace.py`, `experiments/gradcheck.py`, `experiments/stability.py`, and the tests `tests/test_run.py`, `tests/test_attention.py`, `tests/test_gradients.py`, `tests/test_prohibited_api.py`.
-- **Candidate modifications:** *(Candidate to complete.)*
+- **Candidate modifications:** No edits to the code. The candidate approved starting the implementation and working task by task. They asked for the repository under their personal account, kept private, and for commit messages without AI attribution lines.
 - **Verification performed:**
   - The tiny example was worked out by hand and matches the code at every step.
   - 22 tests pass.
@@ -88,7 +88,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - `experiments/generate_data.py`;
   - tests: `tests/test_data.py`, `tests/test_models.py`, `tests/test_train_metrics.py`;
   - changes to `wda/run.py`, `requirements.txt`, the test suite, ARCHITECTURE and the plan.
-- **Candidate modifications:** the candidate approved six design changes from the architecture review:
+- **Candidate modifications:** No edits to the code. The candidate approved six design changes from the architecture review: a separate `run.json`; a macOS-safe PyTorch pin; ablation divergence recorded as a result; shift built before the freeze; the H3 wording fix; and study task T-707.
   1. a separate `run.json`;
   2. a macOS-safe PyTorch pin;
   3. ablation divergence recorded as a result;
@@ -116,7 +116,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
     1. the §19 verdict rule;
     2. 52-week shift series;
     3. baseline B4.
-- **Candidate modifications:** the candidate reviewed and approved the three amendments before any warehouse or shift result existed. *(Candidate to complete.)*
+- **Candidate modifications:** No edits. The candidate read and approved the three Phase 0 amendments (the §19 verdict rule, 52-week shift series, baseline B4) before any warehouse or shift result existed.
 - **Verification performed:**
   - H1–H4 were scored against their frozen thresholds; all four hold.
   - The verifiers rejected several reviewer claims, and the reasons are recorded with each claim. For example, the claim that paired arms start from different weights was refuted by the existing test.
@@ -133,7 +133,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - shared helpers: `select`, `attention_rows`, `load_warehouse_models`;
   - their results;
   - documents: `docs/DERIVATION.md` and `docs/RESULTS.md` (each drafted by one AI agent and checked by another), `README.md`, `docs/DEMO.md`, `docs/DEBUGGING.md`, and the factual parts of `docs/REFLECTION.md`.
-- **Candidate modifications:** *(Candidate to complete.)*
+- **Candidate modifications:** No edits to the code or the documents.
 - **Verification performed:**
   - The test split was scored once, in commit `abf1a8e`, after an empty "freeze configuration" commit. Later reruns reproduce those numbers deterministically.
   - A fresh clone installed from the pins, passed the tests, and reproduced every result with `run_all`. The only exception was last-bit float32 differences under machine load.
@@ -146,7 +146,7 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
 ### 11 · 2026-10-02 · Reflection answers
 - **Task requested:** the candidate asked the AI to write all the reflection answers, including the personal questions (1, 4, 5, 7, 8 and 11).
 - **Generated output:** the complete `docs/REFLECTION.md`. The answers are drawn only from the project record (PHASE0, RESULTS, DEBUGGING and this log), in the candidate's voice; they describe no experience that did not happen in this project.
-- **Candidate modifications:** *(Candidate to complete: what was kept, changed or rewritten.)*
+- **Candidate modifications:** No edits. The candidate accepted the drafted answers as written.
 - **Verification performed:** every factual claim was checked against the results and the debugging journal.
 - **Resulting understanding:** *(Candidate to complete.)*
 
