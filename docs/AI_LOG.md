@@ -81,3 +81,28 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - The gradient check's negative control (a detached W_Q) is reported as disagreeing.
 - **Resulting understanding:** *(Candidate to complete.)*
 
+### 8 · 2026-10-02 · Data, models, training and metrics (T-301 … T-404), and review fixes
+- **Task requested:** continue the plan: warehouse generator, windows and splits, toy task, models, baselines, training loop, metrics; then apply the findings of two independent AI reviews (of the Block A code and of the architecture and plan).
+- **Generated output:**
+  - modules: `wda/warehouse_data.py`, `wda/toy_data.py`, `wda/models.py`, `wda/baselines.py`, `wda/train.py`, `wda/metrics.py`;
+  - `experiments/generate_data.py`;
+  - tests: `tests/test_data.py`, `tests/test_models.py`, `tests/test_train_metrics.py`;
+  - changes to `wda/run.py`, `requirements.txt`, the test suite, ARCHITECTURE and the plan.
+- **Candidate modifications:** the candidate approved six design changes from the architecture review:
+  1. a separate `run.json`;
+  2. a macOS-safe PyTorch pin;
+  3. ablation divergence recorded as a result;
+  4. shift built before the freeze;
+  5. the H3 wording fix;
+  6. study task T-707.
+
+  *(Candidate to complete.)*
+- **Verification performed:**
+  - The generator was checked against the PHASE0 design calculation: autocorrelation 0.84/0.66/0.68 at lags 1/24/168, amplitude 5.42 × the noise SD, 2.5% of hours in events. Split counts are 6,024 / 1,344 / 1,344, as designed.
+  - 61 tests pass, and a full rerun reproduces every result file exactly, apart from the runtime file.
+  - The Block A review found three real problems, all fixed:
+    - V2's "finite means correct" claim is false: at logits [88.5, 87.5, 0], naive softmax returns finite zeros. It will be reported as refuted.
+    - The FAC-15 test could not see an unregistered parameter.
+    - The text-based prohibited-API scan missed aliases. It was replaced by an AST scan.
+- **Resulting understanding:** *(Candidate to complete.)*
+

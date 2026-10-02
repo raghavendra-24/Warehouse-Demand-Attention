@@ -246,7 +246,8 @@ Drafted with AI assistance; see [AI_LOG.md](AI_LOG.md).
 - **Requirements:** §13, §14; A-19; H2, H3, H4; FAC-22, FAC-26 … FAC-30
 - **Acceptance criteria:**
   - The grid is {scaled, unscaled} × d_k {4, 64} × 3 paired seeds; the arms share data, initial weights and batch order, and the per-arm configs differ only in `scaled`.
-  - At step 0, before any update, on one fixed batch: entropy ÷ ln n, logit SD, maximum weight and per-row ‖∂L/∂q_i‖.
+  - At step 0, before any update, on one fixed batch: entropy ÷ ln n, logit SD, maximum weight and the readout row's ‖∂L/∂q‖ per sequence (the other rows do not reach the loss).
+  - A diverging arm is recorded as "diverged at step N", not a crash (H4).
   - Training diagnostics are logged, and steps to 95% are reported.
   - `results/ablation/` holds the curves and the table.
 - **Estimate:** 45 min, including the runs
@@ -273,10 +274,10 @@ Drafted with AI assistance; see [AI_LOG.md](AI_LOG.md).
 
 ### T-505 · Distribution shift **[demo part 6]**
 - **Files:** `experiments/shift.py`
-- **Depends on:** T-504
+- **Depends on:** T-503 (built and checked before the freeze; rerun after T-504)
 - **Requirements:** §19; A-20; H9, H10, H11; FAC-41 … FAC-44
 - **Acceptance criteria:**
-  - It loads the saved weights with no retraining and generates the four series with the shift seed.
+  - It loads the saved weights (with their model config, μ and s) with no retraining, takes the reference baseline chosen on validation, and generates the four series with the shift seed.
   - One table covers every model and baseline, with the change from the control.
   - MAE in the first 3 hours after spike onsets is reported.
   - `predictions_<condition>.csv` files are written.
@@ -319,7 +320,7 @@ Drafted with AI assistance; see [AI_LOG.md](AI_LOG.md).
 - **Depends on:** T-507
 - **Requirements:** §22; A-24; FAC-51, FAC-67
 - **Acceptance criteria:**
-  - A fresh clone installs, passes the tests, and regenerates `results/data` with an empty `git diff`.
+  - A fresh clone installs, passes the tests, and regenerates `results/data` with an empty `git diff` (excluding `run.json`, which holds the runtime).
   - One warehouse rerun gives the stated tolerance.
   - Assessor access is confirmed.
 - **Estimate:** 30 min
@@ -394,6 +395,18 @@ Drafted with AI assistance; see [AI_LOG.md](AI_LOG.md).
 
 ---
 
+### T-707 · Candidate study of the code and the maths
+- **Files:** —
+- **Depends on:** T-701, T-702
+- **Requirements:** §2.6, §34; A-23
+- **Acceptance criteria:**
+  - The candidate reads `wda/attention.py`, `wda/gradcheck.py`, `wda/train.py` and the derivation.
+  - The candidate reruns the tiny-example trace by hand and can explain every line of the attention core and every choice in ASSUMPTIONS.
+  - The AI-log "resulting understanding" fields are written in the candidate's own words.
+- **Estimate:** 90 min
+
+---
+
 ## Phase 8 — Submission
 
 ### T-801 · Final checks and submit
@@ -415,7 +428,7 @@ Drafted with AI assistance; see [AI_LOG.md](AI_LOG.md).
 | A | 2 Oct, 20:45 – 00:30 | T-001, T-101 … T-104, T-201 … T-204 → **Checkpoint A** |
 | B | 3 Oct, 08:00 – 12:30 | T-301 … T-305, T-401 … T-404, T-501, T-502; T-701 in parallel |
 | C | 3 Oct, 13:30 – 18:00 | T-503 … T-507, T-601, T-602 |
-| D | 3 Oct, 18:00 – 22:30 | T-702 … T-706, T-801; 22:30 – 23:59 is buffer |
+| D | 3 Oct, 18:00 – 22:30 | T-702 … T-707, T-801; 22:30 – 23:59 is buffer |
 
 **If behind schedule, cut in this order.** Each cut is a dated PHASE0 amendment, made before the affected result exists:
 1. the demo recording;
