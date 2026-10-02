@@ -125,16 +125,17 @@ GRADCHECK = {"n": 5, "d_model": 3, "d_k": 4, "d_v": 2, "h": 1e-6, "rtol": 1e-6, 
 
 # The fixed tiny example (FAC-14): used by experiments.attention_trace, by the
 # hand-computed forward test, and by the worked example in docs/DERIVATION.md.
-# n = 2 tokens, d_model = 3, d_k = 4, d_v = 1, so every size differs.
+# n = 2 tokens, d_model = 3, d_k = 4, d_v = 1, so every size differs. S = QKᵀ is
+# deliberately asymmetric, so a KQᵀ bug changes the result.
 TINY_EXAMPLE = {
     "X": [[1.0, 0.0, 1.0],
           [0.0, 2.0, 1.0]],
     "W_Q": [[1.0, 0.0, 1.0, 0.0],
             [0.0, 1.0, 0.0, 1.0],
             [1.0, 1.0, 0.0, 0.0]],
-    "W_K": [[0.0, 1.0, 0.0, 1.0],
-            [1.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0, 1.0]],
+    "W_K": [[1.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+            [0.0, 1.0, 0.0, 0.0]],
     "W_V": [[1.0],
             [2.0],
             [0.0]],
