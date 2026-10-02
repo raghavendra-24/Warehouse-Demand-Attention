@@ -158,7 +158,7 @@
             "scaled_rows_below_1pct_of_scaled_median": 0.0,
             "p90_p10_scaled": 4.124598026275635,
             "p90_p10_unscaled": 6.249004364013672,
-            "median_ratio_unscaled_over_scaled": 1.8575178384780884
+            "median_ratio_unscaled_over_scaled": 1.857517957687378
           },
           {
             "seed": 1,
@@ -314,11 +314,11 @@
             "entropy_readout": 0.887000560760498,
             "max_weight_readout": 0.27630069851875305,
             "logit_sd": 0.9746487736701965,
-            "grad_W_Q": 0.010167410597205162,
-            "grad_W_K": 0.014470874331891537,
+            "grad_W_Q": 0.010167409665882587,
+            "grad_W_K": 0.014470873400568962,
             "grad_W_V": 0.02303205244243145,
             "grad_q_readout_p10": 0.00021238585759419948,
-            "grad_q_readout_p50": 0.0004431343113537878,
+            "grad_q_readout_p50": 0.0004431342822499573,
             "grad_q_readout_p90": 0.0008760063210502267
           },
           "diverged_at": null,
