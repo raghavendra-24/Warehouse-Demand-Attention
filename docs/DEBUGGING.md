@@ -9,6 +9,7 @@ Written as the work happened (PRD §24). Each episode follows the same steps: in
 4. Diagnostic: printed S for the tiny example: [[2, 7], [7, 4]], symmetric.
 5. Correction: changed W_K in config.TINY_EXAMPLE so S = [[4, 1], [4, 7]] (asymmetric); added an element-by-element reference test on random inputs (s_ij = Σ_d q_i[d] k_j[d]).
 6. Verification: five planted bugs (KQᵀ, no scale, wrong softmax axis, /d_k, AᵀV) each now fail at least one test; 19 tests pass on the correct code.
+7. Follow-up (commit `3af601f`, from an independent code review): the new example still had a symmetric **A** ([[a, 1−a], [1−a, a]]), so the hand test alone could not tell AV from AᵀV (the element-by-element test could). W_K was changed once more, giving S = [[4, 1], [4, 5]] and an asymmetric A; this is the example in `wda/config.py`, `results/trace/table.md` and DERIVATION.md. The hand test now catches both KQᵀ and AᵀV on its own.
 
 ## Episode 2 (T-304): a NumPy boolean broke metrics.json
 - Unexpected: generate_data crashed at finish(): "cannot write bool to JSON"; figures existed, metrics did not.

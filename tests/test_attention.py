@@ -50,10 +50,20 @@ def test_stable_softmax_does_not_overflow_on_large_logits():
     torch.testing.assert_close(a, expected)
 
 
-def test_stable_softmax_matches_naive_where_naive_is_finite():
+def test_stable_softmax_matches_naive_on_moderate_logits():
+    """Only moderate logits: near float32 overflow, naive softmax can be finite and still wrong (V2, results/stability)."""
     s = torch.randn(6, 7, generator=torch.Generator().manual_seed(1), dtype=torch.float64) * 5
     naive = torch.exp(s) / torch.exp(s).sum(dim=-1, keepdim=True)
     torch.testing.assert_close(stable_softmax(s), naive)
+
+
+def test_stable_softmax_is_correct_where_naive_is_finite_but_wrong():
+    """V2's band: at [88.5, 87.5, 0] in float32 each exp is finite but their sum overflows."""
+    s = torch.tensor([88.5, 87.5, 0.0])
+    naive = torch.exp(s) / torch.exp(s).sum()
+    assert torch.isfinite(naive).all() and naive.sum() == 0          # finite, and wrong
+    expected = torch.tensor([1.0, math.exp(-1.0), math.exp(-88.5)]) / (1.0 + math.exp(-1.0) + math.exp(-88.5))
+    torch.testing.assert_close(stable_softmax(s), expected)
 
 
 def tiny():
