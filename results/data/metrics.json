@@ -1,0 +1,85 @@
+{
+  "stage": "data",
+  "runtime_seconds": 1.5,
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.14.1+cpu",
+    "numpy": "2.5.3",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-1335U",
+    "threads": 4
+  },
+  "configs": {
+    "data": {
+      "n_hours": 8736,
+      "start_day": 0,
+      "base": 100.0,
+      "daily_a1": 60.0,
+      "daily_a2": 15.0,
+      "daily_peak_hour": 14,
+      "weekday_offsets": [
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        0.0,
+        -15.0,
+        -25.0
+      ],
+      "dispersion": 100.0,
+      "floor": 1.0,
+      "spike_onset_prob": 0.004,
+      "spike_durations": [
+        3,
+        6
+      ],
+      "spike_multiplier": [
+        2.0,
+        4.0
+      ],
+      "drop_onset_prob": 0.002,
+      "drop_durations": [
+        2,
+        4
+      ],
+      "drop_multiplier": [
+        0.3,
+        0.6
+      ],
+      "spike_scale": 1.0,
+      "seed": 101
+    }
+  },
+  "metrics": {
+    "mean_demand": 100.35554029304029,
+    "autocorrelation": {
+      "1": 0.8392796296699302,
+      "24": 0.6631983364336839,
+      "168": 0.6760755969579352
+    },
+    "noise_sd_at_mean_level_formula": 13.838721186642667,
+    "noise_sd_at_mean_level_measured": 12.999638466183852,
+    "daily_amplitude": 75.0,
+    "amplitude_over_noise_sd": 5.4195759122881295,
+    "spike_onsets": 43,
+    "drop_onsets": 13,
+    "spike_onset_rate_per_free_hour": 0.005050505050505051,
+    "drop_onset_rate_per_free_hour": 0.001526896875734085,
+    "share_of_hours_in_events": 0.025412087912087912,
+    "spike_multiplier_min_median_max": [
+      2.0094984404906913,
+      2.7489457861025364,
+      3.8701017169884957
+    ],
+    "drop_multiplier_min_median_max": [
+      0.3014823264563018,
+      0.40779809495559,
+      0.5982033673378566
+    ],
+    "design_targets_met": {
+      "daily amplitude \u2265 5 \u00d7 noise SD at the mean level": true,
+      "events affect \u2264 ~5% of hours": true,
+      "spikes 2\u20134 \u00d7 the expected level": true
+    }
+  }
+}
