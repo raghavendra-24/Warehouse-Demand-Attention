@@ -8,8 +8,6 @@ Agreement: |autograd − numerical| ≤ 1e-08 + 1e-06·|numerical| (A-17)
 | W_K | 12 | 7.57e-10 | 2.62e-08 | 0 |
 | W_V | 6 | 3.37e-10 | 4.10e-09 | 0 |
 
-Unexplained entries: 0
-
 | Tensor | Index | Autograd | Numerical | Abs. diff | Rel. diff | Agrees |
 |---|---|---|---|---|---|---|
 | X | (0, 0) | -0.6625417251 | -0.6625417258 | 7.55e-10 | 1.14e-09 | yes |
@@ -57,3 +55,5 @@ Unexplained entries: 0
 | W_V | (1, 1) | -0.7060827933 | -0.7060827933 | 2.22e-11 | 3.15e-11 | yes |
 | W_V | (2, 0) | +0.9059883875 | +0.9059883879 | 3.37e-10 | 3.72e-10 | yes |
 | W_V | (2, 1) | +0.0296859515 | +0.0296859516 | 1.22e-10 | 4.10e-09 | yes |
+
+Unexplained entries: 0

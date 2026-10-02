@@ -1,14 +1,5 @@
 {
   "stage": "data",
-  "runtime_seconds": 1.5,
-  "environment": {
-    "python": "3.12.3",
-    "torch": "2.14.1+cpu",
-    "numpy": "2.5.3",
-    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
-    "cpu": "13th Gen Intel(R) Core(TM) i5-1335U",
-    "threads": 4
-  },
   "configs": {
     "data": {
       "n_hours": 8736,

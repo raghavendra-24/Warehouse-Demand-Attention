@@ -39,10 +39,10 @@ def main():
     ]
     lines += [f"| {k} | {s['entries']} | {s['max_abs_diff']:.2e} | {s['max_rel_diff']:.2e} | {s['disagree']} |"
               for k, s in summary.items()]
-    lines += ["", f"Unexplained entries: {unexplained}", "",
-              "| Tensor | Index | Autograd | Numerical | Abs. diff | Rel. diff | Agrees |", "|---|---|---|---|---|---|---|"]
+    lines += ["", "| Tensor | Index | Autograd | Numerical | Abs. diff | Rel. diff | Agrees |", "|---|---|---|---|---|---|---|"]
     lines += [f"| {r['tensor']} | {r['index']} | {r['autograd']:+.10f} | {r['numerical']:+.10f} | "
               f"{r['abs_diff']:.2e} | {r['rel_diff']:.2e} | {'yes' if r['agrees'] else 'NO'} |" for r in rows]
+    lines += ["", f"Unexplained entries: {unexplained}"]
     run.finish("gradcheck", {"summary": summary, "unexplained": unexplained, "rows": rows},
                "\n".join(lines), {"gradcheck": c})
 
