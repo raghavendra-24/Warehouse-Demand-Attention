@@ -3,8 +3,10 @@
 from dataclasses import replace
 
 import numpy as np
+import torch
 
 from wda import config
+from wda.toy_data import make_recall
 from wda.warehouse_data import generate_series, make_windows, split_masks, training_stats
 
 
@@ -79,3 +81,37 @@ def test_shift_series_share_one_event_timeline():
 def test_shift_series_use_their_own_seed_not_the_training_data():
     train = generate_series(config.WAREHOUSE)["demand"][:1368]
     assert not np.array_equal(generate_series(config.SHIFT_SERIES["control"])["demand"], train)
+
+
+# --- Toy task (A-18) --------------------------------------------------------
+
+
+def test_toy_tokens_have_the_documented_layout():
+    cfg = config.TOY
+    tokens, target = make_recall(cfg, 200, seed=0)
+    assert tokens.shape == (200, cfg.n_tokens, cfg.token_dim) and target.shape == (200,)
+    pairs, query = tokens[:, :cfg.n_pairs], tokens[:, cfg.n_pairs]
+    assert (pairs[..., :cfg.n_keys].sum(-1) == 1).all() and (pairs[..., cfg.n_keys:-1].sum(-1) == 1).all()
+    assert (pairs[..., -1] == 0).all()
+    assert (query[:, :cfg.n_keys].sum(-1) == 1).all() and (query[:, cfg.n_keys:-1] == 0).all()
+    assert (query[:, -1] == 1).all()
+    assert (tokens.pow(2).sum(-1) == 2).all()        # ‖x‖² = 2 for every token (A-19 initialisation)
+
+
+def test_toy_target_is_the_value_of_the_queried_key():
+    cfg = config.TOY
+    tokens, target = make_recall(cfg, 300, seed=1)
+    for i in range(300):
+        keys = tokens[i, :cfg.n_pairs, :cfg.n_keys].argmax(-1)
+        values = tokens[i, :cfg.n_pairs, cfg.n_keys:-1].argmax(-1)
+        asked = tokens[i, cfg.n_pairs, :cfg.n_keys].argmax()
+        assert len(set(keys.tolist())) == cfg.n_pairs and len(set(values.tolist())) == cfg.n_pairs
+        assert target[i] == values[keys == asked].item()
+
+
+def test_toy_splits_use_different_seeds():
+    cfg = config.TOY
+    a, _ = make_recall(cfg, 50, cfg.seed_train)
+    b, _ = make_recall(cfg, 50, cfg.seed_val)
+    assert not torch.equal(a, b)
+    assert torch.equal(a, make_recall(cfg, 50, cfg.seed_train)[0])
