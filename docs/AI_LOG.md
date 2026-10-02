@@ -69,3 +69,15 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
 - **Candidate modifications:** *(Candidate to complete.)*
 - **Verification performed:** an AI verifier checked it against the Phase 0 acceptance criteria and the design targets, and confirmed that the hypotheses were copied verbatim.
 - **Resulting understanding:** *(Candidate to complete.)*
+
+### 7 · 2026-10-02 · Block A code: setup and attention core (T-101 … T-204)
+- **Task requested:** implement the plan task by task: pinned environment, package skeleton, configuration, run helper, attention core, its tests, gradient check, and the trace and stability scripts.
+- **Generated output:** `requirements.txt`, `CLAUDE.md`, `wda/config.py`, `wda/run.py`, `wda/attention.py`, `wda/gradcheck.py`, `experiments/attention_trace.py`, `experiments/gradcheck.py`, `experiments/stability.py`, and the tests `tests/test_run.py`, `tests/test_attention.py`, `tests/test_gradients.py`, `tests/test_prohibited_api.py`.
+- **Candidate modifications:** *(Candidate to complete.)*
+- **Verification performed:**
+  - The tiny example was worked out by hand and matches the code at every step.
+  - 22 tests pass.
+  - A mutation check planted five bugs in the attention core (KQᵀ, no scaling, softmax over the wrong axis, division by d_k, AᵀV). It found that the first tiny example gave a symmetric score matrix, so KQᵀ passed every test. The example was changed and an element-by-element reference test was added; all five bugs are now caught.
+  - The gradient check's negative control (a detached W_Q) is reported as disagreeing.
+- **Resulting understanding:** *(Candidate to complete.)*
+
