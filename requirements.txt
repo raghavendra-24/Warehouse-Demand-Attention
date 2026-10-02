@@ -1,4 +1,5 @@
-# Exact pins (A-01). PyTorch CPU wheels come from the official CPU index.
+# Exact pins (A-01). PyTorch CPU wheels come from the official CPU index on Linux and
+# Windows; macOS wheels are CPU-only and carry no '+cpu' label, so they come from PyPI.
 --extra-index-url https://download.pytorch.org/whl/cpu
 contourpy==1.4.0
 cycler==0.12.1
@@ -21,6 +22,8 @@ pyparsing==3.3.3
 pytest==9.1.1
 python-dateutil==2.9.0.post0
 six==1.17.0
+setuptools==78.1.0
 sympy==1.14.0
-torch==2.14.1+cpu
+torch==2.14.1+cpu; sys_platform != "darwin"
+torch==2.14.1; sys_platform == "darwin"
 typing_extensions==4.16.0
