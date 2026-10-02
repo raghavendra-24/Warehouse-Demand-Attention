@@ -44,7 +44,8 @@ def gradcheck(fn, tensors: dict, h: float = 1e-6, rtol: float = 1e-6, atol: floa
                     "numerical": g_num,
                     "abs_diff": diff,
                     "rel_diff": diff / scale if scale > 0 else 0.0,
-                    "agrees": bool(torch.isclose(torch.tensor(g_auto), torch.tensor(g_num), rtol=rtol, atol=atol)),
+                    "agrees": bool(torch.isclose(torch.tensor(g_auto, dtype=torch.float64),
+                                                    torch.tensor(g_num, dtype=torch.float64), rtol=rtol, atol=atol)),
                 })
     return rows
 

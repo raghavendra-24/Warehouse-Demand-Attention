@@ -104,6 +104,9 @@ TOY_MODEL = ModelConfig(d_model=TOY.token_dim, qkv_init_std=0.5 ** 0.5, n_out=TO
 # Warehouse: E‖f‖² = 3, so W_in ~ N(0, 1/3); then W ~ N(0, 1/16) for d_model = 16.
 WAREHOUSE_MODEL = ModelConfig(d_model=16, qkv_init_std=0.25, d_in=5, in_init_std=(1 / 3) ** 0.5)
 ABLATION_DK = (4, 64)
+TOY_TARGET_ACCURACY = 0.95            # H4: steps to 95% validation accuracy
+DIAG_BATCH_SIZE = 256                 # fixed diagnostic batch (PHASE0 section 6)
+# Weights kept: best validation accuracy (toy), best validation MAE (warehouse).
 
 
 @dataclass(frozen=True)
@@ -125,17 +128,17 @@ GRADCHECK = {"n": 5, "d_model": 3, "d_k": 4, "d_v": 2, "h": 1e-6, "rtol": 1e-6, 
 
 # The fixed tiny example (FAC-14): used by experiments.attention_trace, by the
 # hand-computed forward test, and by the worked example in docs/DERIVATION.md.
-# n = 2 tokens, d_model = 3, d_k = 4, d_v = 1, so every size differs. S = QKᵀ is
-# deliberately asymmetric, so a KQᵀ bug changes the result.
+# n = 2 tokens, d_model = 3, d_k = 4, d_v = 1, so every size differs. Both S = QKᵀ
+# and A are deliberately asymmetric, so KQᵀ and AᵀV bugs change the result.
 TINY_EXAMPLE = {
     "X": [[1.0, 0.0, 1.0],
           [0.0, 2.0, 1.0]],
     "W_Q": [[1.0, 0.0, 1.0, 0.0],
             [0.0, 1.0, 0.0, 1.0],
             [1.0, 1.0, 0.0, 0.0]],
-    "W_K": [[1.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0],
-            [0.0, 1.0, 0.0, 0.0]],
+    "W_K": [[1.0, 0.0, 1.0, -1.0],
+            [0.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 1.0]],
     "W_V": [[1.0],
             [2.0],
             [0.0]],

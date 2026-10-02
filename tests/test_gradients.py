@@ -1,5 +1,6 @@
 """Gradient verification (§9, §23, A-17, FAC-15, FAC-56)."""
 
+import pytest
 import torch
 
 from wda.attention import AttentionWeights, attention
@@ -35,6 +36,18 @@ def test_autograd_matches_float64_central_differences_for_every_entry():
     assert all(s["disagree"] == 0 for s in summarise(rows).values())
 
 
+@pytest.mark.parametrize("scaled", [True, False])
+def test_gradients_agree_for_both_ablation_arms_on_batched_input(scaled):
+    g = torch.Generator().manual_seed(3)
+    f64 = dict(generator=g, dtype=torch.float64)
+    tensors = {"X": torch.randn(2, N, D_MODEL, **f64), "W_Q": torch.randn(D_MODEL, D_K, **f64),
+               "W_K": torch.randn(D_MODEL, D_K, **f64), "W_V": torch.randn(D_MODEL, D_V, **f64)}
+    R = torch.randn(2, N, D_V, **f64)
+    rows = gradcheck(lambda X, W_Q, W_K, W_V: (attention(X, W_Q, W_K, W_V, scaled=scaled).Y * R).sum(),
+                     tensors, h=GRADCHECK["h"], rtol=GRADCHECK["rtol"], atol=GRADCHECK["atol"])
+    assert all(r["agrees"] for r in rows)
+
+
 def test_check_catches_a_broken_autograd_graph():
     """Negative control: detaching W_Q makes autograd report zero, while the function still depends on it."""
     _, R = inputs()
@@ -50,6 +63,7 @@ def test_one_step_trains_all_three_projections():
     X = torch.randn(4, N, D_MODEL, generator=g)
     R = torch.randn(4, N, D_V, generator=g)
     before = {k: v.detach().clone() for k, v in weights.named_parameters()}
+    assert {name for name, _ in weights.named_parameters()} == {"W_Q", "W_K", "W_V"}
     loss = (weights(X).Y * R).sum()
     loss.backward()
     for name, p in weights.named_parameters():
