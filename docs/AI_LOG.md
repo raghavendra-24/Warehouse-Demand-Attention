@@ -123,3 +123,23 @@ Tool for every entry so far: **Claude Code** (Claude Opus 5.5), including its mu
   - The upheld claims were checked by direct computation. The 8-week seed-202 shift series really has one spike, and the relative verdict rule really does label a perfect forecaster "simply adapted".
 - **Resulting understanding:** *(Candidate to complete.)*
 
+### 10 · 2026-10-02 · Warehouse, shift and failure experiments; run_all; the documents
+- **Task requested:** finish the plan:
+  - the warehouse model (validation, then a single test evaluation after a freeze commit), the distribution shift, the failure investigation and `run_all`;
+  - the fresh-clone check;
+  - DERIVATION, RESULTS, README, DEMO, DEBUGGING and the reflection scaffold.
+- **Generated output:**
+  - experiment scripts: `experiments/warehouse.py`, `experiments/shift.py`, `experiments/failure.py`, `experiments/run_all.py`;
+  - shared helpers: `select`, `attention_rows`, `load_warehouse_models`;
+  - their results;
+  - documents: `docs/DERIVATION.md` and `docs/RESULTS.md` (each drafted by one AI agent and checked by another), `README.md`, `docs/DEMO.md`, `docs/DEBUGGING.md`, and the factual parts of `docs/REFLECTION.md`.
+- **Candidate modifications:** *(Candidate to complete.)*
+- **Verification performed:**
+  - The test split was scored once, in commit `abf1a8e`, after an empty "freeze configuration" commit. Later reruns reproduce those numbers deterministically.
+  - A fresh clone installed from the pins, passed the tests, and reproduced every result with `run_all`. The only exception was last-bit float32 differences under machine load.
+  - The failure explanation was tested by a dose-response experiment, after two explanations from the AI assistant were refuted by its own experiments (DEBUGGING episode 4).
+  - The DERIVATION verifier made 13 corrections.
+  - Two AI agents answered a chat question instead of doing their writing task, and their output was discarded. That episode shows why each document needed an independent check.
+  - The AI assistant mistakenly stopped a `run_all` that the candidate had started in their own terminal. No results were lost: they were restored from Git.
+- **Resulting understanding:** *(Candidate to complete.)*
+

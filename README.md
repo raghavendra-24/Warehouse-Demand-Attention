@@ -59,7 +59,7 @@ The test split is scored only when `FINAL_TEST = True` in `wda/config.py`. It wa
 
 ## Tests
 
-63 tests, each named after the bug it would catch. The five §23 minimum items:
+64 tests, each named after the bug it would catch. The five §23 minimum items:
 
 | §23 item | Test |
 |---|---|
@@ -102,7 +102,7 @@ A mutation check, which plants bugs in the attention core, confirmed that each o
 - **Exact:** the generated data, and every result table, metrics file and figure, are reproduced by `python -m experiments.run_all` on the same machine. `git diff` shows no change apart from `run.json`.
 - **Within a tolerance:** when the machine is busy, float32 model quantities can differ in their last bit, about 1e-7 relative, because the maths library changes its summation order. This was observed once, in four ablation gradient norms.
 - **Not promised:** bit-identical training on a different machine (A-24).
-- **Pre-submission check (T-602), done on 2 October 2026:** a fresh clone installed from `requirements.txt`, all 63 tests passed, and `run_all` regenerated every result in 446 s. Every result file matched the committed version except four ablation gradient norms, which differed in the last float32 bit. The committed run had been made while the machine was busy; the committed ablation file now comes from that clean rerun.
+- **Pre-submission check (T-602), done on 2 October 2026:** a fresh clone installed from `requirements.txt`, all 63 tests (then the full suite) passed, and `run_all` regenerated every result in 446 s. Every result file matched the committed version except four ablation gradient norms, which differed in the last float32 bit. The committed run had been made while the machine was busy; the committed ablation file now comes from that clean rerun.
 
 ## Deliverables map (§29)
 
