@@ -6,6 +6,7 @@ import numpy as np
 import torch
 
 from wda import config
+from wda.baselines import last_observation, moving_average, seasonal_naive
 from wda.toy_data import make_recall
 from wda.warehouse_data import generate_series, make_windows, split_masks, training_stats
 
@@ -115,3 +116,22 @@ def test_toy_splits_use_different_seeds():
     b, _ = make_recall(cfg, 50, cfg.seed_val)
     assert not torch.equal(a, b)
     assert torch.equal(a, make_recall(cfg, 50, cfg.seed_train)[0])
+
+
+# --- Baselines (§17, A-15, FAC-34) -----------------------------------------
+
+def test_baselines_on_a_ramp_catch_wrong_lag_or_window():
+    """Predicting y(24) from y(0) … y(23) on y(t) = t: B1 = 23, B2 = 11.5, B3 = 0."""
+    raw = np.arange(24, dtype=float)[None, :]
+    assert last_observation(raw)[0] == 23
+    assert moving_average(raw)[0] == 11.5
+    assert seasonal_naive(raw)[0] == 0
+
+
+def test_seasonal_naive_is_the_same_hour_yesterday():
+    s = generate_series(config.WAREHOUSE)
+    w = make_windows(s)
+    i = 1000
+    tau = w["target_index"][i]
+    assert seasonal_naive(w["raw_window"])[i] == s["demand"][tau - 24]
+    assert s["hour_of_day"][tau - 24] == s["hour_of_day"][tau]
