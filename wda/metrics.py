@@ -9,7 +9,7 @@ import math
 import numpy as np
 import torch
 
-from wda.baselines import BASELINES
+from wda.baselines import BASELINES, hour_of_week_mean
 from wda.warehouse_data import model_inputs
 
 GROUPS = ("all", "inside", "after", "other")
@@ -53,11 +53,15 @@ def predict(model, X: torch.Tensor, mean: float, sd: float) -> np.ndarray:
     return (mean + sd * z).double().numpy()
 
 
-def score(models: dict, windows: dict, mean: float, sd: float) -> tuple:
-    """Per-window predictions for every model and baseline, and their error table."""
+def score(models: dict, windows: dict, mean: float, sd: float, profile: np.ndarray) -> tuple:
+    """Per-window predictions for every model and baseline (B1–B4), and their error table.
+
+    μ, s and the B4 hour-of-week profile all come from the training targets (A-13).
+    """
     X = model_inputs(windows, mean, sd)
     predictions = {name: predict(m, X, mean, sd) for name, m in models.items()}
     predictions.update({b: f(windows["raw_window"]) for b, f in BASELINES.items()})
+    predictions["B4"] = hour_of_week_mean(windows, profile)
     return predictions, error_table(predictions, windows["target"], windows["group"])
 
 

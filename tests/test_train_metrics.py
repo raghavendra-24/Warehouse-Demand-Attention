@@ -102,8 +102,9 @@ def test_score_inverse_standardises_and_includes_every_baseline():
     with torch.no_grad():                    # a model that always predicts ẑ = 0 must forecast μ
         model.head.weight.zero_()
         model.head.bias.zero_()
-    preds, table = score({"pred_s0": model}, w, mean=100.0, sd=50.0)
-    assert set(preds) == {"pred_s0", "B1", "B2", "B3"}
+    preds, table = score({"pred_s0": model}, w, mean=100.0, sd=50.0, profile=np.arange(168.0))
+    assert set(preds) == {"pred_s0", "B1", "B2", "B3", "B4"}
+    np.testing.assert_array_equal(preds["B4"], w["target_day"] * 24 + w["target_hour"])
     np.testing.assert_allclose(preds["pred_s0"], 100.0, rtol=1e-6)
     np.testing.assert_array_equal(preds["B1"], w["raw_window"][:, -1])
     assert table["B3"]["all"]["count"] == 100

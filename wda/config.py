@@ -46,10 +46,11 @@ VAL_WEEKS = (37, 44)
 TEST_WEEKS = (45, 52)
 WINDOW = 24                            # input hours y(t−23) … y(t) (A-04)
 
-# Distribution-shift series (A-20, PHASE0 section 8): 8 weeks on the test
-# calendar, preceded by a 24-hour warm-up, so the series starts on the Sunday
-# before a Monday and yields 1,344 targets. All four share the shift seed.
-_SHIFT_BASE = replace(WAREHOUSE, n_hours=WINDOW + 8 * 168, start_day=6, seed=202)
+# Distribution-shift series (A-20, PHASE0 section 8 and Amendment 2): 52 weeks,
+# preceded by a 24-hour warm-up, so the series starts on a Sunday and its first
+# target is a Monday 00:00; 8,736 targets. All four share the shift seed.
+SHIFT_WEEKS = 52
+_SHIFT_BASE = replace(WAREHOUSE, n_hours=WINDOW + SHIFT_WEEKS * 168, start_day=6, seed=202)
 SHIFT_SERIES = {
     "control": _SHIFT_BASE,
     "higher_noise": replace(_SHIFT_BASE, dispersion=14.0),

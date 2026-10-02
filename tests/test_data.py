@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 from wda import config
-from wda.baselines import last_observation, moving_average, seasonal_naive
+from wda.baselines import hour_of_week_mean, hour_of_week_profile, last_observation, moving_average, seasonal_naive
 from wda.toy_data import make_recall
 from wda.warehouse_data import generate_series, make_windows, split_masks, training_stats
 
@@ -76,12 +76,13 @@ def test_shift_series_share_one_event_timeline():
         assert np.array_equal(s["event_onset"], control["event_onset"]), name
     spikes = control["event_label"] == 1
     np.testing.assert_allclose(series["larger_spikes"]["level"][spikes] / control["level"][spikes], 2.0)
-    assert len(make_windows(control)["target"]) == 1344 and control["day_of_week"][24] == 0   # Monday
+    assert len(make_windows(control)["target"]) == config.SHIFT_WEEKS * 168 and control["day_of_week"][24] == 0
 
 
 def test_shift_series_use_their_own_seed_not_the_training_data():
-    train = generate_series(config.WAREHOUSE)["demand"][:1368]
-    assert not np.array_equal(generate_series(config.SHIFT_SERIES["control"])["demand"], train)
+    train = generate_series(config.WAREHOUSE)["demand"]
+    shift = generate_series(config.SHIFT_SERIES["control"])["demand"]
+    assert not np.array_equal(shift[:len(train)], train)
 
 
 # --- Toy task (A-18) --------------------------------------------------------
@@ -135,3 +136,18 @@ def test_seasonal_naive_is_the_same_hour_yesterday():
     tau = w["target_index"][i]
     assert seasonal_naive(w["raw_window"])[i] == s["demand"][tau - 24]
     assert s["hour_of_day"][tau - 24] == s["hour_of_day"][tau]
+
+
+def test_hour_of_week_baseline_uses_training_targets_only():
+    w = make_windows(generate_series(config.WAREHOUSE))
+    m = split_masks(w)
+    profile = hour_of_week_profile(w, m["train"])
+    assert profile.shape == (168,)
+    k = 2 * 24 + 14                                      # Wednesday 14:00
+    how = w["target_day"] * 24 + w["target_hour"]
+    assert np.isclose(profile[k], w["target"][m["train"] & (how == k)].mean())
+    changed = dict(w, target=np.where(m["train"], w["target"], 1e6))
+    np.testing.assert_array_equal(hour_of_week_profile(changed, m["train"]), profile)
+    pred = hour_of_week_mean(w, profile)
+    assert pred[how == k].min() == pred[how == k].max() == profile[k]
+
