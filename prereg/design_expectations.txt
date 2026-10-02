@@ -1,0 +1,17 @@
+mean expected level 97.14; noise SD there 13.84; amplitude 75 / SD = 5.42
+level range 30..180; D(h) = [-44.5, -45.0, -45.0, -45.0, -44.5, -42.4, -37.5, -28.5, -15.0, 2.5, 22.5, 42.4, 59.5, 70.9, 75.0, 70.9, 59.5, 42.4, 22.5, 2.5, -15.0, -28.5, -37.5, -42.4]
+  lambda    30.0: SD r=100    6.2, r=14    9.7
+  lambda    97.1: SD r=100   13.8, r=14   27.8
+  lambda   100.0: SD r=100   14.1, r=14   28.5
+  lambda   180.0: SD r=100   22.4, r=14   49.9
+  lambda   720.0: SD r=100   76.8, r=14  194.3
+  lambda  1440.0: SD r=100  148.9, r=14  386.7
+events/h spikes 0.00391 drops 0.00195; event-hour share 0.0234; per 52 w 34.1/17.1, per 36 w 23.6/11.8, per 8 w 5.2/2.6
+ACF with events {1: 0.84, 12: -0.52, 24: 0.63, 168: 0.66}  without {1: 0.87, 12: -0.71, 24: 0.87, 168: 0.91}
+expected target mean 100.2, SD 57.3
+oracle normal-hour MAE (predicting lambda) 11.0
+control       normal B1/B2/B3 18.4 40.5 19.1 | all hours 20.3 44.1 25.6 | extra per spike 457 931 1577 | in-spike MAE 81 180 194 | B1 first 3 h 97
+   normal-hour MAE by target day Mon..Sun  B1 [19.8, 19.1, 19.1, 19.1, 18.6, 17.4, 16.2]  B3 [31.4, 16.5, 16.5, 16.5, 16.7, 19.9, 16.0]
+higher noise  normal B1/B2/B3 32.9 44.2 33.6 | all hours 35.1 47.9 39.5 | extra per spike 542 956 1457 | in-spike MAE 117 183 195 | B1 first 3 h 128
+larger spikes normal B1/B2/B3 18.4 40.5 19.1 | all hours 23.2 52.3 35.9 | extra per spike 1197 3023 4200 | in-spike MAE 181 447 486 | B1 first 3 h 224
+both          normal B1/B2/B3 32.9 44.2 33.6 | all hours 38.6 56.0 49.7 | extra per spike 1449 3021 4071 | in-spike MAE 254 448 486 | B1 first 3 h 287

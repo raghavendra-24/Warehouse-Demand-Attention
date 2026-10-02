@@ -1,0 +1,15 @@
+# virtual environments
+.venv/
+venv/
+env/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# editors and OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
