@@ -151,3 +151,11 @@ def test_hour_of_week_baseline_uses_training_targets_only():
     pred = hour_of_week_mean(w, profile)
     assert pred[how == k].min() == pred[how == k].max() == profile[k]
 
+
+
+def test_select_keeps_rows_aligned():
+    from wda.warehouse_data import select
+    w = make_windows(generate_series(config.WAREHOUSE))
+    val = select(w, split_masks(w)["val"])
+    assert len(val["target"]) == len(val["raw_window"]) == len(val["group"]) == 1344
+    assert np.array_equal(val["raw_window"][0], w["raw_window"][split_masks(w)["val"]][0])

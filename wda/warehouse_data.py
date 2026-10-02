@@ -144,3 +144,8 @@ def training_stats(windows: dict, masks: dict) -> tuple:
     """μ and s of the training targets: the only data the standardisation may see (A-13, FAC-38)."""
     train = windows["target"][masks["train"]]
     return float(train.mean()), float(train.std())
+
+
+def select(windows: dict, mask: np.ndarray) -> dict:
+    """The rows of `windows` where `mask` is true (one split, or one slice of errors)."""
+    return {k: v[mask] for k, v in windows.items()}
