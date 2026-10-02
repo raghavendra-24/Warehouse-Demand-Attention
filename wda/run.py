@@ -88,7 +88,7 @@ def load_weights(path: Path) -> dict:
 
 
 def _jsonable(value):
-    if isinstance(value, (np.integer, np.floating)):
+    if isinstance(value, (np.integer, np.floating, np.bool_)):
         return value.item()
     if isinstance(value, (np.ndarray, torch.Tensor)):
         return value.tolist()

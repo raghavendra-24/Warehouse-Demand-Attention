@@ -2,6 +2,7 @@
 
 import json
 
+import numpy as np
 import pytest
 import torch
 
@@ -30,6 +31,13 @@ def test_finish_records_config_versions_and_runtime(results_dir):
     assert {"python", "torch", "numpy", "cpu"} <= record["environment"].keys()
     assert record["runtime_seconds"] >= 0
     assert (results_dir / "stage" / "table.md").read_text().startswith("| x |")
+
+
+def test_finish_writes_numpy_scalars_and_booleans(results_dir):
+    run.start("stage")
+    run.finish("stage", {"ok": np.bool_(True), "x": np.float64(0.5), "n": np.int64(3), "v": np.arange(2)}, "t", {})
+    record = json.loads((results_dir / "stage" / "metrics.json").read_text())
+    assert record["metrics"] == {"ok": True, "x": 0.5, "n": 3, "v": [0, 1]}
 
 
 def test_weights_round_trip_without_pickle(results_dir):
