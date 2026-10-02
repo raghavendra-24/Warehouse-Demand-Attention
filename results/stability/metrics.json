@@ -1,0 +1,168 @@
+{
+  "stage": "stability",
+  "runtime_seconds": 0.0,
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.14.1+cpu",
+    "numpy": "2.5.3",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-1335U",
+    "threads": 4
+  },
+  "configs": {
+    "max_logits": [
+      80.0,
+      85.0,
+      88.0,
+      89.0,
+      90.0,
+      100.0,
+      1000.0
+    ],
+    "dtype": "float32"
+  },
+  "metrics": {
+    "rows": [
+      {
+        "logits": [
+          80.0,
+          79.0,
+          0.0
+        ],
+        "naive": [
+          0.7310585975646973,
+          0.26894140243530273,
+          1.3194520872754859e-35
+        ],
+        "stable": [
+          0.7310585975646973,
+          0.2689414322376251,
+          1.3194520872754859e-35
+        ],
+        "naive_finite": true,
+        "stable_sum": 1.0,
+        "max_diff_where_finite": 2.9802322387695312e-08
+      },
+      {
+        "logits": [
+          85.0,
+          84.0,
+          0.0
+        ],
+        "naive": [
+          0.7310585975646973,
+          0.2689414322376251,
+          8.890398537581755e-38
+        ],
+        "stable": [
+          0.7310585975646973,
+          0.2689414322376251,
+          8.890398537581755e-38
+        ],
+        "naive_finite": true,
+        "stable_sum": 1.0,
+        "max_diff_where_finite": 0.0
+      },
+      {
+        "logits": [
+          88.0,
+          87.0,
+          0.0
+        ],
+        "naive": [
+          0.7310585379600525,
+          0.2689414322376251,
+          4.426268847576621e-39
+        ],
+        "stable": [
+          0.7310585975646973,
+          0.2689414322376251,
+          4.426268847576621e-39
+        ],
+        "naive_finite": true,
+        "stable_sum": 1.0,
+        "max_diff_where_finite": 5.960464477539063e-08
+      },
+      {
+        "logits": [
+          89.0,
+          88.0,
+          0.0
+        ],
+        "naive": [
+          NaN,
+          0.0,
+          0.0
+        ],
+        "stable": [
+          0.7310585975646973,
+          0.2689414322376251,
+          1.6283340389177953e-39
+        ],
+        "naive_finite": false,
+        "stable_sum": 1.0,
+        "max_diff_where_finite": null
+      },
+      {
+        "logits": [
+          90.0,
+          89.0,
+          0.0
+        ],
+        "naive": [
+          NaN,
+          NaN,
+          0.0
+        ],
+        "stable": [
+          0.7310585975646973,
+          0.2689414322376251,
+          5.9902987012650145e-40
+        ],
+        "naive_finite": false,
+        "stable_sum": 1.0,
+        "max_diff_where_finite": null
+      },
+      {
+        "logits": [
+          100.0,
+          99.0,
+          0.0
+        ],
+        "naive": [
+          NaN,
+          NaN,
+          0.0
+        ],
+        "stable": [
+          0.7310585975646973,
+          0.2689414322376251,
+          2.802596928649634e-44
+        ],
+        "naive_finite": false,
+        "stable_sum": 1.0,
+        "max_diff_where_finite": null
+      },
+      {
+        "logits": [
+          1000.0,
+          999.0,
+          0.0
+        ],
+        "naive": [
+          NaN,
+          NaN,
+          0.0
+        ],
+        "stable": [
+          0.7310585975646973,
+          0.2689414322376251,
+          0.0
+        ],
+        "naive_finite": false,
+        "stable_sum": 1.0,
+        "max_diff_where_finite": null
+      }
+    ]
+  }
+}

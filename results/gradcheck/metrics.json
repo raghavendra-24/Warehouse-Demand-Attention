@@ -1,0 +1,595 @@
+{
+  "stage": "gradcheck",
+  "runtime_seconds": 0.0,
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.14.1+cpu",
+    "numpy": "2.5.3",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-1335U",
+    "threads": 4
+  },
+  "configs": {
+    "gradcheck": {
+      "n": 5,
+      "d_model": 3,
+      "d_k": 4,
+      "d_v": 2,
+      "h": 1e-06,
+      "rtol": 1e-06,
+      "atol": 1e-08,
+      "seed": 7
+    }
+  },
+  "metrics": {
+    "summary": {
+      "X": {
+        "entries": 15,
+        "max_abs_diff": 8.046562305352722e-10,
+        "max_rel_diff": 3.693181105447022e-09,
+        "disagree": 0
+      },
+      "W_Q": {
+        "entries": 12,
+        "max_abs_diff": 8.984312738213873e-10,
+        "max_rel_diff": 1.4675539504627373e-08,
+        "disagree": 0
+      },
+      "W_K": {
+        "entries": 12,
+        "max_abs_diff": 7.574794680387242e-10,
+        "max_rel_diff": 2.623130507426943e-08,
+        "disagree": 0
+      },
+      "W_V": {
+        "entries": 6,
+        "max_abs_diff": 3.3706359925389506e-10,
+        "max_rel_diff": 4.10024656801084e-09,
+        "disagree": 0
+      }
+    },
+    "unexplained": 0,
+    "rows": [
+      {
+        "tensor": "X",
+        "index": [
+          0,
+          0
+        ],
+        "autograd": -0.6625417250605472,
+        "numerical": -0.6625417258154798,
+        "abs_diff": 7.549325609090829e-10,
+        "rel_diff": 1.1394490814595642e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          0,
+          1
+        ],
+        "autograd": 0.4324721374346978,
+        "numerical": 0.43247213687980235,
+        "abs_diff": 5.548954629119862e-10,
+        "rel_diff": 1.2830779485667421e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          0,
+          2
+        ],
+        "autograd": 0.33959724152426773,
+        "numerical": 0.339597240994749,
+        "abs_diff": 5.295187621712216e-10,
+        "rel_diff": 1.5592551923993825e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          1,
+          0
+        ],
+        "autograd": 0.5663894147045715,
+        "numerical": 0.5663894142582393,
+        "abs_diff": 4.463321934267128e-10,
+        "rel_diff": 7.880306055146167e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          1,
+          1
+        ],
+        "autograd": 0.1198590727041291,
+        "numerical": 0.11985907300005039,
+        "abs_diff": 2.959212874742434e-10,
+        "rel_diff": 2.4689101965115233e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          1,
+          2
+        ],
+        "autograd": -0.1549274302010271,
+        "numerical": -0.1549274299961212,
+        "abs_diff": 2.0490589780486346e-10,
+        "rel_diff": 1.322592761907859e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          2,
+          0
+        ],
+        "autograd": -0.7705902105265694,
+        "numerical": -0.7705902105303863,
+        "abs_diff": 3.816946758661288e-12,
+        "rel_diff": 4.953276990158151e-12,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          2,
+          1
+        ],
+        "autograd": 0.6396450763629214,
+        "numerical": 0.6396450762391481,
+        "abs_diff": 1.2377332492263804e-10,
+        "rel_diff": 1.935031308713015e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          2,
+          2
+        ],
+        "autograd": 0.4357365108178443,
+        "numerical": 0.43573651042905226,
+        "abs_diff": 3.887920541068013e-10,
+        "rel_diff": 8.922641193804672e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          3,
+          0
+        ],
+        "autograd": 0.7112215421320677,
+        "numerical": 0.7112215413274114,
+        "abs_diff": 8.046562305352722e-10,
+        "rel_diff": 1.1313721293130552e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          3,
+          1
+        ],
+        "autograd": -0.12704792488610617,
+        "numerical": -0.12704792484719007,
+        "abs_diff": 3.89160925706733e-11,
+        "rel_diff": 3.063103360842781e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          3,
+          2
+        ],
+        "autograd": 0.15993646077742354,
+        "numerical": 0.15993646018674923,
+        "abs_diff": 5.906743150152494e-10,
+        "rel_diff": 3.693181105447022e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          4,
+          0
+        ],
+        "autograd": -0.1143711894403722,
+        "numerical": -0.11437118974111371,
+        "abs_diff": 3.0074151502468283e-10,
+        "rel_diff": 2.6295216103411175e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          4,
+          1
+        ],
+        "autograd": 0.5127460039417577,
+        "numerical": 0.5127460034337616,
+        "abs_diff": 5.079960896381408e-10,
+        "rel_diff": 9.90736321166617e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "X",
+        "index": [
+          4,
+          2
+        ],
+        "autograd": 0.26849564665132264,
+        "numerical": 0.26849564704889417,
+        "abs_diff": 3.9757153125208333e-10,
+        "rel_diff": 1.480737343870919e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          0,
+          0
+        ],
+        "autograd": 0.19471481811510488,
+        "numerical": 0.19471481849109296,
+        "abs_diff": 3.759880740084043e-10,
+        "rel_diff": 1.9309679505753874e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          0,
+          1
+        ],
+        "autograd": -0.2873940754242708,
+        "numerical": -0.2873940755376836,
+        "abs_diff": 1.1341277916798731e-10,
+        "rel_diff": 3.946246245883953e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          0,
+          2
+        ],
+        "autograd": -0.33078791026063603,
+        "numerical": -0.33078790973029015,
+        "abs_diff": 5.303458783245674e-10,
+        "rel_diff": 1.6032807181698225e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          0,
+          3
+        ],
+        "autograd": 0.16641362143663566,
+        "numerical": 0.16641362199365517,
+        "abs_diff": 5.570195138471234e-10,
+        "rel_diff": 3.3471990283845926e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          1,
+          0
+        ],
+        "autograd": -0.22818108767140427,
+        "numerical": -0.22818108758038136,
+        "abs_diff": 9.102291143037178e-11,
+        "rel_diff": 3.9890646661063666e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          1,
+          1
+        ],
+        "autograd": 0.07530022897886776,
+        "numerical": 0.07530022849699947,
+        "abs_diff": 4.818682952656417e-10,
+        "rel_diff": 6.399293890605208e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          1,
+          2
+        ],
+        "autograd": 0.03965281289524921,
+        "numerical": 0.03965281347717564,
+        "abs_diff": 5.819264306539118e-10,
+        "rel_diff": 1.4675539504627373e-08,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          1,
+          3
+        ],
+        "autograd": -0.16295963242106287,
+        "numerical": -0.1629596322327842,
+        "abs_diff": 1.8827867043214042e-10,
+        "rel_diff": 1.1553699995202308e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          2,
+          0
+        ],
+        "autograd": 0.18619705583714719,
+        "numerical": 0.18619705643985185,
+        "abs_diff": 6.027046639545119e-10,
+        "rel_diff": 3.2369183244806376e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          2,
+          1
+        ],
+        "autograd": -0.39247513216130187,
+        "numerical": -0.39247513305973314,
+        "abs_diff": 8.984312738213873e-10,
+        "rel_diff": 2.2891419051628164e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          2,
+          2
+        ],
+        "autograd": -0.4717397259581065,
+        "numerical": -0.4717397261710943,
+        "abs_diff": 2.129877940681979e-10,
+        "rel_diff": 4.5149429283161495e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_Q",
+        "index": [
+          2,
+          3
+        ],
+        "autograd": 0.17000498424135127,
+        "numerical": 0.1700049838682105,
+        "abs_diff": 3.73140768283875e-10,
+        "rel_diff": 2.1948813439148208e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          0,
+          0
+        ],
+        "autograd": 0.36265554944082734,
+        "numerical": 0.36265554970160707,
+        "abs_diff": 2.607797311426907e-10,
+        "rel_diff": 7.190838010262362e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          0,
+          1
+        ],
+        "autograd": -0.6808928403767022,
+        "numerical": -0.6808928409984816,
+        "abs_diff": 6.217794057405968e-10,
+        "rel_diff": 9.13182469107475e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          0,
+          2
+        ],
+        "autograd": 0.020079994806430926,
+        "numerical": 0.02007999533315541,
+        "abs_diff": 5.26724483473906e-10,
+        "rel_diff": 2.623130507426943e-08,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          0,
+          3
+        ],
+        "autograd": -1.4467132323691205,
+        "numerical": -1.446713231989527,
+        "abs_diff": 3.7959346776972325e-10,
+        "rel_diff": 2.623833523303754e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          1,
+          0
+        ],
+        "autograd": 0.5101279294074181,
+        "numerical": 0.5101279290098404,
+        "abs_diff": 3.9757774850102123e-10,
+        "rel_diff": 7.793687143592804e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          1,
+          1
+        ],
+        "autograd": -0.08269905984617147,
+        "numerical": -0.08269905948932177,
+        "abs_diff": 3.5684970256522064e-10,
+        "rel_diff": 4.315039411923144e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          1,
+          2
+        ],
+        "autograd": -0.20655494643751682,
+        "numerical": -0.20655494670229757,
+        "abs_diff": 2.6478075287883485e-10,
+        "rel_diff": 1.2818901561358232e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          1,
+          3
+        ],
+        "autograd": -0.913138375296755,
+        "numerical": -0.9131383755800471,
+        "abs_diff": 2.832920564799224e-10,
+        "rel_diff": 3.102400074906156e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          2,
+          0
+        ],
+        "autograd": -0.260894659856211,
+        "numerical": -0.26089465909873155,
+        "abs_diff": 7.574794680387242e-10,
+        "rel_diff": 2.903391999116425e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          2,
+          1
+        ],
+        "autograd": -0.39003990808246536,
+        "numerical": -0.39003990770503094,
+        "abs_diff": 3.774344170537347e-10,
+        "rel_diff": 9.676815352287862e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          2,
+          2
+        ],
+        "autograd": 0.20787962853292755,
+        "numerical": 0.207879628733032,
+        "abs_diff": 2.001044607791158e-10,
+        "rel_diff": 9.625977398492404e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_K",
+        "index": [
+          2,
+          3
+        ],
+        "autograd": -0.1009752956832058,
+        "numerical": -0.10097529556940543,
+        "abs_diff": 1.1380037190367176e-10,
+        "rel_diff": 1.127012019461697e-09,
+        "agrees": true
+      },
+      {
+        "tensor": "W_V",
+        "index": [
+          0,
+          0
+        ],
+        "autograd": -0.6538829721915594,
+        "numerical": -0.6538829722124717,
+        "abs_diff": 2.091227191414191e-11,
+        "rel_diff": 3.1981673790010714e-11,
+        "agrees": true
+      },
+      {
+        "tensor": "W_V",
+        "index": [
+          0,
+          1
+        ],
+        "autograd": 0.6912328988210222,
+        "numerical": 0.6912328991415251,
+        "abs_diff": 3.2050284648477145e-10,
+        "rel_diff": 4.636683914825512e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_V",
+        "index": [
+          1,
+          0
+        ],
+        "autograd": 0.7402449854121225,
+        "numerical": 0.740244985308891,
+        "abs_diff": 1.0323142340951108e-10,
+        "rel_diff": 1.3945575511334025e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_V",
+        "index": [
+          1,
+          1
+        ],
+        "autograd": -0.7060827933224828,
+        "numerical": -0.70608279334472,
+        "abs_diff": 2.2237212071729573e-11,
+        "rel_diff": 3.149377421646506e-11,
+        "agrees": true
+      },
+      {
+        "tensor": "W_V",
+        "index": [
+          2,
+          0
+        ],
+        "autograd": 0.9059883875299769,
+        "numerical": 0.9059883878670405,
+        "abs_diff": 3.3706359925389506e-10,
+        "rel_diff": 3.7203964616747523e-10,
+        "agrees": true
+      },
+      {
+        "tensor": "W_V",
+        "index": [
+          2,
+          1
+        ],
+        "autograd": 0.029685951464091944,
+        "numerical": 0.029685951585811665,
+        "abs_diff": 1.2171972110786022e-10,
+        "rel_diff": 4.10024656801084e-09,
+        "agrees": true
+      }
+    ]
+  }
+}
